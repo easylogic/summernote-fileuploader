@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Summernote Plugin : summernote-fileuploader</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+
+  <script type="text/javascript" src="./dist/summernote-fileuploader.js"></script>
+
+</head>
+<body>
+<div id="summernote"></div>
+<script type="text/javascript">
+$(function () {
+  $("#summernote").summernote({
+    callbacks: {
+      onInit : function () {
+        console.log('init');
+      }
+    },
+    toolbar : [
+      ['fileUploader', ['fileUploader'] ]
+    ]
+  });
+})
+</script>
+</body>
+</html>
