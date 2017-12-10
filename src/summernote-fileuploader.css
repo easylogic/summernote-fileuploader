@@ -1,0 +1,90 @@
+.summernote-fileuploader {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: none;
+  box-sizing:border-box;
+  border:1px solid black; 
+}
+
+.summernote-fileuploader > .tabs {
+  position: absolute;
+  left:0px;
+  right:0px;
+  top:0px;
+  height: 40px;
+  display:flex;
+}
+
+.summernote-fileuploader > .tabs > .tab-item {
+  flex:1;
+  padding:5px 10px;
+  text-decoration: underline;
+}
+
+.summernote-fileuploader > .tabs > .tab-item.selected {
+  font-weight:bold;
+  color:blue;
+}
+
+.summernote-fileuploader-upload-container {
+
+}
+
+.summernote-fileuploader-directory-container {
+
+}
+
+/* upload panle  */
+.summernote-fileuploader-upload-panel {
+  position: absolute;
+  left:0px;
+  right:0px;
+  height: 100px;
+  bottom: 0px;
+  background-color: red;
+
+}
+
+.summernote-fileuploader-upload-panel > input[type=file] {
+  position:absolute;
+  left:0px;
+  width:100%;
+  height:100%;
+  top:0px;
+  cursor:pointer;
+  outline:none;
+}
+
+.summernote-fileuploader-upload-panel > input[type=file]:after {
+  display:block;
+  content: "클릭해주세요.";
+  position:absolute;
+  left:0px;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  background-color:rgba(255, 255, 255, 1);
+}
+
+/* preview panel  */
+.summernote-fileuploader-preview-panel {
+  position: absolute;
+  left:0px;
+  right:0px;
+  top: 0px;
+  bottom:100px;
+  background-color: yellow;
+  overflow:auto;
+}
+
+.summernote-fileuploader-preview-panel .view-item { 
+  display:inline-block;
+  vertical-align: middle;
+  width: 100px;
+  height: 100px;
+  box-sizing: border-box;
+  padding:10px;
+  margin:5px;
+  background-color: black;
+}

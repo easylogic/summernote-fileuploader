@@ -1,18 +1,25 @@
 {
   "name": "summernote-fileuploader",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build src/index.js --no-minify",
-    "dev": "parcel index.html"
+    "build": "parcel build src/summernote-fileuploader.js --no-minify",
+    "dev": "parcel  index.html -d dev",
+    "pub": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/easylogic/summernote-fileuploader.git"
   },
-  "keywords": ["summernote", "file", "uploader", "html5", "ajax"],
+  "keywords": [
+    "summernote",
+    "file",
+    "uploader",
+    "html5",
+    "ajax"
+  ],
   "author": "easylogic",
   "license": "MIT",
   "bugs": {
@@ -23,18 +30,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-minify": "^0.2.0",
     "cross-env": "^5.1.1",
-    "parcel-bundler": "^1.0.1"
-  },
-  "babel": {
-    "presets": [
-      "env"
-    ],
-    "env": {
-      "production": {
-        "presets": [
-          "minify"
-        ]
-      }
-    }
+    "parcel-bundler": "^1.0.1",
+    "posthtml": "^0.10.1"
   }
 }

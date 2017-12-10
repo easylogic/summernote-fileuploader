@@ -14,7 +14,7 @@
   <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
   <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>  
 
-  <script type="text/javascript" src="./src/index.js"></script>
+  <script type="text/javascript" src="./src/summernote-fileuploader.js"></script>
 </head>
 <body>
 <div id="summernote">dfsf</div>  
@@ -22,7 +22,7 @@
 $(document).ready(function() {
   $('#summernote').summernote({
     toolbar : [
-      ['hello', ['hello']]
+      ['fileuploader', ['fileuploader', 'simple-fileuploader']]
     ] 
   });
 });
