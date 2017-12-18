@@ -1,7 +1,7 @@
-import './summernote-fileuploader.css'
+import './index.css'
 
 import FileUploader from './component/FileUploader'
 
 $.extend($.summernote.plugins, {
-  'uploader': FileUploader
+  'fileuploader': FileUploader
 });

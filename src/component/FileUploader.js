@@ -117,10 +117,8 @@ class FileUploader extends SummernotePlugin {
     if (!Array.isArray(files)) {
       files = [files];
     }
-    this.files.push.apply(this.files, files);
+
     this.fileManager.addFiles(files);
-
-
     this.previewPanel.refresh();
   }
 

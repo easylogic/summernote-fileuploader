@@ -36,7 +36,11 @@ class FileManager {
     this.files.splice(index, 1);
   }
 
-  addFile (file) {
+  getFiles () {
+    return this.files; 
+  }
+
+  addFile (file) {  
     this.files.push(file);
   }
 
