@@ -5,6 +5,10 @@ class SummernotePlugin {
     this.initializeSummernoteResources();
   }
 
+  getOptions (key) {
+    return this.context.options[key] || {};
+  }
+
   filterProps (pattern) {
     return Object.getOwnPropertyNames(this.__proto__).filter(key => {
       return key.includes(pattern);

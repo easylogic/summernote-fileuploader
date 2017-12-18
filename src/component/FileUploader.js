@@ -9,7 +9,7 @@ class FileUploader extends SummernotePlugin {
     super(context);    
   }
 
-  // ㅜnew button 
+  // new button 
   'button.fileuploader' () {
     const ui = $.summernote.ui; 
     
@@ -19,8 +19,6 @@ class FileUploader extends SummernotePlugin {
       tooltip: 'File Uploader',
       click: () => {
         this.$panel.show();
-        // invoke insertText method with 'hello' on editor module.
-        this.invoke('editor.insertText', 'hello');
       }
     });
 
@@ -46,6 +44,10 @@ class FileUploader extends SummernotePlugin {
     var $hello = button.render();
     return $hello;
   }  
+
+  getOptions() {
+    return super.getOptions('fileuploader');
+  }
 
   openFileDialog () {
     this.uploadPanel.openFileDialog();

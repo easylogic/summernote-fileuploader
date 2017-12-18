@@ -7,8 +7,7 @@ class Request {
   }
 
   send () {
-    var req = new XMLHttpRequest();
-    
+    var req = new XMLHttpRequest();    
     if (this.options.success) {    
       req.addEventListener('load', this.options.success);
       req.upload.addEventListener('load', this.options.success);
@@ -34,6 +33,12 @@ class Request {
     if (this.options.responseType) {
       req.responseType = this.options.responseType;
     }
+
+    if (this.options.headers) {
+      for(let key, value of this.options.headers) {
+        req.setRequestHeader(key, value);
+      }
+    }    
 
     if (this.options.method.toUpperCase() == 'GET') {
       req.send(null);
