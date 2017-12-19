@@ -1,4 +1,4 @@
-import Dom from '../util/Dom'
+import Dom from '../../../util/Dom'
 
 class PreviewPanel {
   constructor(uploader, context /* summernote context */) {
@@ -20,7 +20,9 @@ class PreviewPanel {
   }
 
   parseRender (render) {
-    var result = {};
+    var result = {  
+      previewClass: () => {}
+    };
 
     if (!render) return result; 
 
@@ -98,13 +100,20 @@ class PreviewPanel {
       'data-file' : file
     });
 
-    let tpl = this.renderFunc.template(file, index);
-    let className = this.renderFunc.itemClass(file, index);
-    let styles = this.renderFunc.itemStyle(file, index);
+    if (this.renderFunc.template) {
+      let tpl = this.renderFunc.template(file, index);
+      $el.html(tpl);      
+    } 
 
-    $el.html(tpl);
-    $el.addClass(className);
-    $el.css(styles);
+    if (this.renderFunc.itemClass) {
+      let className = this.renderFunc.itemClass(file, index);
+      $el.addClass(className);      
+    }
+
+    if (this.renderFunc.itemStyle) {
+      let styles = this.renderFunc.itemStyle(file, index);
+      $el.css(styles);
+    }
 
     return $el; 
   }

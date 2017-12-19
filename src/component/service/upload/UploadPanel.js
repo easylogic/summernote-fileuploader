@@ -1,4 +1,4 @@
-import Dom from '../util/Dom'
+import Dom from '../../../util/Dom'
 
 class UploadPanel {
   constructor(uploader, context /* summernote context */) {

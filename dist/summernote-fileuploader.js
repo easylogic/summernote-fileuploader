@@ -764,7 +764,9 @@ var PreviewPanel = function () {
   }, {
     key: 'parseRender',
     value: function parseRender(render) {
-      var result = {};
+      var result = {
+        previewClass: function previewClass() {}
+      };
 
       if (!render) return result;
 
@@ -842,13 +844,20 @@ var PreviewPanel = function () {
         'data-file': file
       });
 
-      var tpl = this.renderFunc.template(file, index);
-      var className = this.renderFunc.itemClass(file, index);
-      var styles = this.renderFunc.itemStyle(file, index);
+      if (this.renderFunc.template) {
+        var tpl = this.renderFunc.template(file, index);
+        $el.html(tpl);
+      }
 
-      $el.html(tpl);
-      $el.addClass(className);
-      $el.css(styles);
+      if (this.renderFunc.itemClass) {
+        var className = this.renderFunc.itemClass(file, index);
+        $el.addClass(className);
+      }
+
+      if (this.renderFunc.itemStyle) {
+        var styles = this.renderFunc.itemStyle(file, index);
+        $el.css(styles);
+      }
 
       return $el;
     }

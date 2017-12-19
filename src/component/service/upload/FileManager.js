@@ -1,3 +1,5 @@
+import Request from '../../../util/Request'
+
 class FileManager {
   constructor(uploader, context) {
     this.uploader = uploader;

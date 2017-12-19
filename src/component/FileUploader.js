@@ -1,12 +1,13 @@
 import SummernotePlugin from './SummernotePlugin'
 import Dom from '../util/Dom'
-import FileManager from '../util/FileManager'
-import UploadPanel from './UploadPanel'
-import PreviewPanel from './PreviewPanel'
+
+// service 
+import UploadServicePanel from './service/upload'
 
 class FileUploader extends SummernotePlugin {
   constructor(context) {
     super(context);    
+    this.services = {};     
   }
 
   // new button 
@@ -18,7 +19,7 @@ class FileUploader extends SummernotePlugin {
       contents: 'Uploader',
       tooltip: 'File Uploader',
       click: () => {
-        this.$panel.show();
+        this.$el.show();
       }
     });
 
@@ -26,112 +27,96 @@ class FileUploader extends SummernotePlugin {
     var $hello = button.render();
     return $hello;
   }
-
-  // ㅜnew button 
-  'button.simple-fileuploader' () {
-    const ui = $.summernote.ui; 
-    
-    // create button
-    var button = ui.button({
-      contents: 'Simple Uploader',
-      tooltip: 'File Uploader',
-      click: () => {
-        this.openFileDialog();
-      }
-    });
-
-    // create jQuery object from button instance.
-    var $hello = button.render();
-    return $hello;
-  }  
 
   getOptions() {
     return super.getOptions('fileuploader');
   }
 
-  openFileDialog () {
-    this.uploadPanel.openFileDialog();
+  addService (service) {
+    this.services[service.id] = service; 
   }
 
-  'summernote.init' (we, e) {
-    console.log('summernote initalized');
-  }
-
-  'summernote.keyup' (we, e) {
-    console.log('summernote keyup', e);
+  removeService (id) {
+    delete this.services[id];
+    
+    this.render();
   }
 
   initialize () {
     super.initialize();
 
-    this.previewPanel = new PreviewPanel(this, this.context);
-    this.uploadPanel = new UploadPanel(this, this.context);
-    this.fileManager = new FileManager(this, this.context);
+    this.addService(new UploadServicePanel(this, this.context));
 
-    this.$panel = new Dom('div', 'summernote-fileuploader', {
+
+    this.$el = new Dom('div', 'summernote-fileuploader', {
       droppable : true 
     });
 
-    this.$panel.append(this.uploadPanel.$el);
-    this.$panel.append(this.previewPanel.$el);
+    this.$el.appendTo('body');
 
-    this.$panel.appendTo('body');
 
-    this.initializeEvent();
+    this.render();
   }
 
-  drop (e) {
-    console.log('drop', e);
+  render () {
+    this.$el.empty();
+
+    this.createTab();
+    this.createTabContent();
+    this.createFooter();
+
+    this.$el.append(this.$tab);
+    this.$el.append(this.$tabContents);
+    this.$el.append(this.$footer);
   }
 
-  dragover (e) {
-    console.log('dragover', e);
+  createTab () {
+    this.$tab = new Dom('div', 'summernote-fileuploader-tabs');
+
+    let service = this.getOptions().service || Object.keys(this.services);
+    
+    service.forEach((id) => {
+      const ServiceObject = this.services[id];
+      const $tabItem = new Dom('div', 'summernote-fileuploader-tab-item').html(ServiceObject.getTitle());
+      $tab.append($tabItem);
+    })
+
   }
 
-  initializeEvent () {
+  createTabContent () {
+    this.$tabContents = new Dom('div', 'summernote-fileuploader-tab-contents');
+    let service = this.getOptions().service || Object.keys(this.services);
+    
+    service.forEach((id) => {
+      const ServiceObject = this.services[id];
+      const $tabContentItem = new Dom('div', 'summernote-fileuploader-tab-contents-item').html(ServiceObject.$el);
+      $tabContents.append($tabContentItem);
+    })    
+  }
 
-    this.$$drop = this.drop.bind(this);
-    this.$$dragover = this.dragover.bind(this);
+  createFooter() {
+    this.$footer = new Dom('div', 'summernote-fileuploader-footer');
 
-    this.$panel.addEventListener('drop', this.$$drop);
-    this.$panel.addEventListener('dragover', this.$$dragover);    
+    this.$select = new Dom('button', 'summernote-fileuploader-select-button');
+    this.$footer.append(this.$select);
+
   }
 
   destroy () {
     super.destroy();
 
-    this.$panel.removeEventListener('drop', this.$$drop);
-    this.$panel.removeEventListener('dragover', this.$$dragover);    
-
-    this.uploadPanel.destroy();
-    this.previewPanel.destroy();
-
-    this.uploadPanel = null;
-    this.previewPanel = null; 
-
-
-    this.$panel.remove();
-    this.$panel = null; 
-  }
-
-  addFile (files) {
-
-    if (!Array.isArray(files)) {
-      files = [files];
+    for(let key in this.services) {
+      if (this.services[key]) {
+        this.services[key].destroy();
+      }
     }
 
-    this.fileManager.addFiles(files);
-    this.previewPanel.refresh();
+    this.services = null; 
+
+    this.$el.remove();
+    this.$el = null; 
   }
 
-  getFiles () {
-    return this.fileManager.getFiles(); 
-  }
-
-  /* upload util method  */
-  upload (file, target) {
-
-  }
 
 }
 

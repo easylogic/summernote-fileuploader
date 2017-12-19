@@ -98,6 +98,16 @@ $("#summernote").summernote({
 
 ```
 
+# upload tab 
+
+* server upload 
+* directory service 
+* google drive 
+* s3 
+* evernote 
+
+tab service 
+
 # dev 
 
 # build 
