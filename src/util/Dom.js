@@ -77,8 +77,9 @@ class Dom {
     if (arguments.length == 0) {
       return this.el.innerHTML;
     }
-
-    if (Array.isArray(html)) {  // dom list 
+    if (typeof html === 'string') {  // html 
+      this.el.innerHTML = html;
+    } else if (Array.isArray(html)) {  // dom list 
       var arr = html.map(el => {
         return el.el ? el.el : el; 
       })
@@ -93,9 +94,7 @@ class Dom {
 
     } else if (typeof html === 'object') {  // dom 
       this.el.appendChlid(html);
-    } else if (typeof html === 'string') {  // html 
-      this.el.innerHTML = html;
-    }
+    }  
 
     return this;
   }

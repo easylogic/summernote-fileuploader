@@ -1,3 +1,5 @@
+import './FileUpload.scss'
+
 import SummernotePlugin from './SummernotePlugin'
 import Dom from '../util/Dom'
 

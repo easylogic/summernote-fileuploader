@@ -1,5 +1,5 @@
 import packageJSON from '../package.json'
-import css from 'rollup-plugin-css-only'
+import scss from 'rollup-plugin-scss'
 import babel from 'rollup-plugin-babel';
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
@@ -14,7 +14,7 @@ export default {
   plugins : [
     serve(),
     livereload({watch: 'dist'}),
-    css({output : 'dist/' + packageJSON.name + '.css'}),
+    scss({output : 'dist/' + packageJSON.name + '.css'}),
     babel({
       exclude: 'node_modules/**',
       presets : 'es2015-rollup'

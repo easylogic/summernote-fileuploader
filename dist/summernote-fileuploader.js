@@ -268,8 +268,10 @@ var Dom = function () {
       if (arguments.length == 0) {
         return this.el.innerHTML;
       }
-
-      if (Array.isArray(_html)) {
+      if (typeof _html === 'string') {
+        // html 
+        this.el.innerHTML = _html;
+      } else if (Array.isArray(_html)) {
         // dom list 
         var arr = _html.map(function (el) {
           return el.el ? el.el : el;
@@ -285,9 +287,6 @@ var Dom = function () {
       } else if ((typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
         // dom 
         this.el.appendChlid(_html);
-      } else if (typeof _html === 'string') {
-        // html 
-        this.el.innerHTML = _html;
       }
 
       return this;

@@ -1,4 +1,4 @@
-import './index.css'
+import './index.scss'
 import Dom from '../../../util/Dom'
 import FileManager from './FileManager'
 import UploadPanel from './UploadPanel'
@@ -109,7 +109,7 @@ class UploadServicePanel {
     if (typeof this.options.fail === 'function') {
       this.options.fail(file, index);
     }
-  }
+  } 
 
   abort (file, index) {
     if (typeof this.options.abort === 'function') {

@@ -1,0 +1,48 @@
+$width: 400px;
+$height: 400px;
+$upload-border: 1px solid #ececec;
+
+.summernote-fileuploader {
+  position: relative;
+  width: $width;
+  height: $height;
+  box-sizing:border-box;
+  border: $upload-border; 
+
+  > .tabs {
+    position: absolute;
+    left:0px;
+    right:0px;
+    top:0px;
+    height: 40px;
+    display:flex;
+
+    > .tab-item {
+      flex:1;
+      padding:5px 10px;
+      text-decoration: underline;
+    }
+  
+    > .tab-item.selected {
+      font-weight:bold;
+      color:blue;
+    }
+  }
+
+  > .tab-contents {
+    position:absolute;
+    left: 0px;
+    right:0px;
+    top:40px;
+    bottom:40px;
+  }
+
+  > .footer {
+    position:absolute;
+    left: 0px;
+    right:0px;
+    top:40px;
+    bottom:40px;
+  }
+
+}
