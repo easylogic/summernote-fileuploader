@@ -1,10 +1,10 @@
 import Dom from '../../../util/Dom'
 
 class UploadPanel {
-  constructor(uploader, context /* summernote context */) {
-    this.uploader = uploader;
+  constructor(service, context /* summernote context */) {
+    this.service = service;
     this.context = context; 
-    this.options = context.options.fileuploader || {};
+    this.options = this.service.getOptions();
     this.initialize();
   }
 
@@ -28,7 +28,7 @@ class UploadPanel {
   }
 
   changeFileInput (e) {
-    this.uploader.addFile([...e.target.files]);
+    this.service.addFile([...e.target.files]);
   }
 
   initializeEvent() {

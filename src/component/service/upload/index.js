@@ -11,6 +11,7 @@ class UploadServicePanel {
 
     this.id = 'upload';
     this.title = "Upload";
+    this.options = this.getOptions();
 
     this.initialize();
   }
@@ -23,9 +24,13 @@ class UploadServicePanel {
     this.uploadPanel.openFileDialog();
   }
 
-  initialize () {
-    super.initialize();
+  getOptions () {
+    return this.uploader.getOptions('upload') || {};
+  }
 
+  initialize () {
+
+    this.fileManager = new FileManager(this, this.context);
     this.previewPanel = new PreviewPanel(this, this.context);
     this.uploadPanel = new UploadPanel(this, this.context);
 
@@ -87,9 +92,29 @@ class UploadServicePanel {
     return this.fileManager.getFiles(); 
   }
 
-  /* upload util method  */
-  upload (file, target) {
+  /* upload event method  */
+  success (file, index) {
+    if (typeof this.options.success === 'function') {
+      this.options.success(file, index);
+    }
+  }
 
+  progress (file, index, loaded, total) {
+    if (typeof this.options.progress === 'function') {
+      this.options.progress(file, index, loaded, total);
+    }
+  }
+
+  fail (file, index) {
+    if (typeof this.options.fail === 'function') {
+      this.options.fail(file, index);
+    }
+  }
+
+  abort (file, index) {
+    if (typeof this.options.abort === 'function') {
+      this.options.abort(file, index);
+    }
   }
 
 }

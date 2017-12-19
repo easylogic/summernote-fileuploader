@@ -1,10 +1,10 @@
 import Request from '../../../util/Request'
 
 class FileManager {
-  constructor(uploader, context) {
-    this.uploader = uploader;
+  constructor(service, context) {
+    this.service = service;
     this.context = context;
-    this.options = this.uploader.getOptions(); 
+    this.options = this.service.getOptions(); 
 
     this.defaultFileName = 'summernote-file';
     this.reponseTypeFunc = this.parseResponseType(this.options.responseType);
@@ -150,13 +150,13 @@ class FileManager {
         headers: headers, 
         responseType: responseType, 
         success : (res) => {
-          this.uploader.success(file, index);
+          this.service.success(file, index);
         },
-        updateProgress : (e) => {
-          this.uploader.updateProgress(file, index, e.loaded, e.total);
+        progress : (e) => {
+          this.service.progress(file, index, e.loaded, e.total);
         },
         fail : (e) => {
-          this.uploader.fail(file, index);
+          this.service.fail(file, index);
         }
       }).send();
   

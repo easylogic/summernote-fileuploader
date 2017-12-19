@@ -78,7 +78,7 @@ class Dom {
       return this.el.innerHTML;
     }
 
-    if (Array.isArray(html)) {
+    if (Array.isArray(html)) {  // dom list 
       var arr = html.map(el => {
         return el.el ? el.el : el; 
       })
@@ -89,9 +89,11 @@ class Dom {
       });
 
       this.el.innerHTML = ''; 
-      this.el.append(fragment);
+      this.el.appendChild(fragment);
 
-    } else {
+    } else if (typeof html === 'object') {  // dom 
+      this.el.appendChlid(html);
+    } else if (typeof html === 'string') {  // html 
       this.el.innerHTML = html;
     }
 

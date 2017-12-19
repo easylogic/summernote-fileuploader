@@ -9,22 +9,18 @@ class Request {
   send () {
     var req = new XMLHttpRequest();    
     if (this.options.success) {    
-      req.addEventListener('load', this.options.success);
       req.upload.addEventListener('load', this.options.success);
     }
 
-    if (this.options.updateProgress) {
-      req.addEventListener('progress', this.options.updateProgress);      
-      req.upload.addEventListener("progress", this.options.updateProgress);
+    if (this.options.progress) {
+      req.upload.addEventListener("progress", this.options.progress);
     }
 
     if (this.options.fail) {
-      req.addEventListener("error", this.options.fail);
       req.upload.addEventListener("error", this.options.fail);      
     }
 
     if (this.options.abort) {
-      req.addEventListener("abort", this.options.abort);
       req.upload.addEventListener("abort", this.options.abort);
     }    
 
@@ -35,8 +31,8 @@ class Request {
     }
 
     if (this.options.headers) {
-      for(let key, value of this.options.headers) {
-        req.setRequestHeader(key, value);
+      for(let key in this.options.headers) {
+        req.setRequestHeader(key, this.options.headers[key]);
       }
     }    
 

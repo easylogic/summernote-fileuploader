@@ -1,14 +1,19 @@
 import Dom from '../../../util/Dom'
 
 class PreviewPanel {
-  constructor(uploader, context /* summernote context */) {
-    this.uploader = uploader;
+  constructor(service, context /* summernote context */) {
+    this.service = service;
     this.context = context; 
-    this.options = this.uploader.getOptions(); 
+    this.options = this.service.getOptions(); 
 
-    this.renderFunc = this.parseRender(this.options.render);
+    this.previewClassFunc = this.parsePreviewClass(this.options.previewClass);
+    this.itemClassFunc = this.parseItemClass(this.options.itemClass);
+    this.itemStyleFunc = this.parseItemStyle(this.options.itemStyle);
+    this.templateFunc = this.parseTemplate(this.options.template);
+
     this.initialize();
   }
+
 
 
   isFunction (it) {
@@ -19,73 +24,72 @@ class PreviewPanel {
     return typeof it === 'string';
   }
 
-  parseRender (render) {
-    var result = {  
-      previewClass: () => {}
-    };
+  isObject (it) {
+    return typeof it === 'object' && !Array.isArray(it);
+  }
 
-    if (!render) return result; 
+  parseItemClass (itemClass) {
 
-    if (render.itemClass) {
-      if (this.isFunction(render.itemClass)) {
-        result.itemClass = (file, i) => {
-          return render.itemClass;
-        }
-      } else if (this.isString(render.itemClass)) {
-        result.itemClass = (file, i) => {
-          return render.itemClass(file, i);
-        }
+    if (this.isString(itemClass)) {
+      return (file, i) => {
+        return itemClass;
       }
-    }
-
-    if (render.itemStyle) {
-      if (this.isFunction(render.itemStyle)) {
-        result.itemStyle = (file, i) => {
-          return render.itemStyle(file, i);
-        }
-      } else {
-        result.itemStyle = (file, i) => {
-          return render.itemStyle;
-        }
+    } else if (this.isFunction(itemClass)) {
+      return (file, i) => {
+        return itemClass(file, i);  // return string 
       }
-    }
+    } 
 
-    if (render.template) {
-      if (this.isString(render.template)) {
-        result.template = (file, i) => {
-          return render.template; 
-        }
-      } else if (this.isFunction(render.template)) {
-        result.template = (file, i) => {
-          return render.template(file, i);
-        }
-      } 
-    }
+  }
 
-    if (render.previewClass) {
-      if (this.isString(render.previewClass)) {
-        result.previewClass = (file, i) => {
-          return render.previewClass; 
-        }
-      } else if (this.isFunction(render.previewClass)) {
-        result.previewClass = (file, i) => {
-          return render.previewClass(file, i);
-        }
-      } 
-    }
+  parseItemStyle (itemStyle) {
     
-    return result;
+    if (this.isFunction(itemStyle)) {
+      return (file, i) => {
+        return itemStyle(file, i);  // return object 
+      }
+    } else if (this.isObject(itemStyle)) {
+      return (file, i) => {
+        return itemStyle;
+      }
+    }
+  }
+
+  parseTemplate (template) {
+    if (this.isFunction(template)) {
+      return (file, i) => {
+        return template(file, i);   // return string or dom or domlist
+      }
+    } else if (this.isString(template)) {
+      return (file, i) => {
+        return template; 
+      } 
+    } 
+
+  }
+
+  parsePreviewClass (previewClass) {
+    if (this.isString(previewClass)) {
+      return () => {
+        return previewClass; 
+      } 
+    } else if (this.isFunction(previewClass)) {
+      return () => {
+        return previewClass();  // return string 
+      }
+    }
   }
   
-
   initialize () {
 
     this.$el = new Dom('div', 'summernote-fileuploader-preview-panel');
-    this.$el.addClass(this.renderFunc.previewClass());
 
-    this.initializeEvent();
+    if (this.previewClassFunc) {
+      this.$el.addClass(this.previewClassFunc());
+    }
 
-    
+
+    this.initializeEvent();  
   }
 
   refresh () {
@@ -100,18 +104,18 @@ class PreviewPanel {
       'data-file' : file
     });
 
-    if (this.renderFunc.template) {
-      let tpl = this.renderFunc.template(file, index);
+    if (this.templateFunc) {
+      let tpl = this.templateFunc(file, index);
       $el.html(tpl);      
     } 
 
-    if (this.renderFunc.itemClass) {
-      let className = this.renderFunc.itemClass(file, index);
+    if (this.itemClassFunc) {
+      let className = this.itemClassFunc(file, index);
       $el.addClass(className);      
     }
 
-    if (this.renderFunc.itemStyle) {
-      let styles = this.renderFunc.itemStyle(file, index);
+    if (this.itemStyleFunc) {
+      let styles = this.itemStyleFunc(file, index);
       $el.css(styles);
     }
 
@@ -120,7 +124,7 @@ class PreviewPanel {
 
   render () {
 
-    var arr = this.uploader.getFiles().map((file, index) => {
+    var arr = this.service.getFiles().map((file, index) => {
         return this.renderViewItem(file, index);
     })
 

@@ -2,7 +2,7 @@ import SummernotePlugin from './SummernotePlugin'
 import Dom from '../util/Dom'
 
 // service 
-import UploadServicePanel from './service/upload'
+import UploadServicePanel from './service/upload/index'
 
 class FileUploader extends SummernotePlugin {
   constructor(context) {
@@ -28,8 +28,15 @@ class FileUploader extends SummernotePlugin {
     return $hello;
   }
 
-  getOptions() {
-    return super.getOptions('fileuploader');
+  getOptions(key) {
+
+    let options = super.getOptions('fileuploader');
+
+    if (key) {
+      return options[key] || {} 
+    }
+
+    return options;
   }
 
   addService (service) {
@@ -47,18 +54,20 @@ class FileUploader extends SummernotePlugin {
 
     this.addService(new UploadServicePanel(this, this.context));
 
+    this.initializeUI();
+    this.render();
+  }
 
+  initializeUI () {
     this.$el = new Dom('div', 'summernote-fileuploader', {
       droppable : true 
     });
 
-    this.$el.appendTo('body');
-
-
-    this.render();
+    this.$el.appendTo('body');    
   }
 
   render () {
+
     this.$el.empty();
 
     this.createTab();

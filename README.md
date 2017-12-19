@@ -9,8 +9,7 @@ $("#summernote").summernote({
     modules : {
         fileuploader : {
 
-            render : {
-
+            upload : {
                 itemClass : 'xxx xxx xxx',
                 itemClass : function (file, i) {
                     return ['xxx' +  'ab' + 'xxx'];
@@ -39,58 +38,71 @@ $("#summernote").summernote({
                     return dom; 
                     return domArray; 
                     return new Promise({}).then();
-                }
-            },
-            responseType : 'arraybuffer',
-            params : {
-                key: value,
-                key: value,
-                key: valueFunction 
-            },
-            params : function (file, i) {
-               return {
+                },
+                responseType : 'arraybuffer',
+                params : {
                     key: value,
                     key: value,
                     key: valueFunction 
-                }      
-            },
-            params: function (file, i) {
-                return new Promise().then();
-            },
-            headers : {
-                'Content-Type': 'text/html;charset=utf-8',
-                'Connection': 'close',
-            },
-            headers : function (file, i) {
+                },
+                params : function (file, i) {
                 return {
+                        key: value,
+                        key: value,
+                        key: valueFunction 
+                    }      
+                },
+                params: function (file, i) {
+                    return new Promise().then();
+                },
+                headers : {
                     'Content-Type': 'text/html;charset=utf-8',
                     'Connection': 'close',
+                },
+                headers : function (file, i) {
+                    return {
+                        'Content-Type': 'text/html;charset=utf-8',
+                        'Connection': 'close',
+                    }
+                },
+                headers : function (file, i) {
+                    return new Promise({
+                        'Content-Type': 'text/html;charset=utf-8',
+                        'Connection': 'close',
+                    }).then();
+                },
+                method : 'post',
+                method : 'get',
+                url : {
+                    host : '',
+                    port : '',
+                    protocol : '',
+                    path : '',
+                    query : '' 
+                },
+                url : urlString   // url ,  paring 
+                url: 'http://www.domain.co.kr/xxxxxxxxx?xxxx',
+                url : function (file) {
+                    if (file.type.indexOf('image/') > -1) {
+                        return '/image/server/upload';
+                    } else {
+                        return '/file/server/upload';
+                    }
                 }
-            },
-            headers : function (file, i) {
-                return new Promise({
-                    'Content-Type': 'text/html;charset=utf-8',
-                    'Connection': 'close',
-                }).then();
-            },
-            method : 'post',
-            method : 'get',
-            url : {
-                host : '',
-                port : '',
-                protocol : '',
-                path : '',
-                query : '' 
-            },
-            url : urlString   // url ,  paring 
-            url: 'http://www.domain.co.kr/xxxxxxxxx?xxxx',
-            url : function (file) {
-                if (file.type.indexOf('image/') > -1) {
-                    return '/image/server/upload';
-                } else {
-                    return '/file/server/upload';
+
+                // 
+                success : function (file, index) {
+
+                },
+                progress : function (file, index, loaded, total) {
+
+                },
+                fail : function (file, index) {
+
                 }
+
             }
+
         }
     }
 })
