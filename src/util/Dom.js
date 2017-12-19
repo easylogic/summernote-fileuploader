@@ -4,31 +4,48 @@ let Counter = 0;
 class Dom {
 
   constructor (tag, className, attr) {
-    this.tag = tag;
-    this.className = className;
-    this.attr = attr; 
+    this._tag = tag;
+    this._className = className;
+    this._attr = attr; 
 
     this.initialize();
     
   }
 
   initialize () {
-    if (typeof this.tag != 'string') {
-      this.el = this.tag;
+    if (typeof this._tag != 'string') {
+      this.el = this._tag;
     } else {
-        var el  = document.createElement(this.tag);
+        var el  = document.createElement(this._tag);
 
         this.uniqId = Counter++;
 
-        el.className = this.className;
+        el.className = this._className;
 
-        const attr = this.attr || {};
+        const attr = this._attr || {};
         for(var k in attr) {
             el.setAttribute(k, attr[k]);
         }
 
-        this.el = el;
+        this.el = el; 
     }
+  }
+
+  attr (key, value) {
+    if (arguments.length == 1) {
+      if (typeof key === 'string') { 
+        return this.el.getAttribute(key);
+      } else if (typeof key === 'object') {
+        for(let k in key) {
+          this.el.setAttribute(k, key[k]);
+        }
+      }
+
+    } else if (arguments.length == 2) {
+      this.el.setAttribute(key, value);
+    }
+
+    return this; 
   }
 
   closest(cls) {
@@ -70,13 +87,24 @@ class Dom {
         this.el.className = `${this.el.className} ${cls}`;
     }
 
-    return this; 
+    return this;  
+  }
+
+  find (selector) {
+    return new Dom(this.el.querySelector(selector));
+  }
+
+  findAll (selector) {
+    return [...this.el.querySelectorAll(selector)].map((node) => {
+      return new Dom(node);
+    })
   }
 
   html (html) {
     if (arguments.length == 0) {
       return this.el.innerHTML;
     }
+
     if (typeof html === 'string') {  // html 
       this.el.innerHTML = html;
     } else if (Array.isArray(html)) {  // dom list 
@@ -90,10 +118,10 @@ class Dom {
       });
 
       this.el.innerHTML = ''; 
-      this.el.appendChild(fragment);
+      this.append(fragment);
 
     } else if (typeof html === 'object') {  // dom 
-      this.el.appendChlid(html);
+      this.append(html);
     }  
 
     return this;
@@ -228,9 +256,17 @@ class Dom {
     this.el.addEventListener(eventName, callback, opt1 || false);
   }
 
+  on (eventName, callback, opt1) {
+    this.addEventListener(eventName, callback, opt1);
+  }
+
   removeEventListener (eventName, callback, opt1) {
     this.el.removeEventListener(eventName, callback);
   }  
+
+  off (eventName, callback, opt1) {
+    this.removeEventListener(eventName, callback, opt1);
+  }
 
 }
 

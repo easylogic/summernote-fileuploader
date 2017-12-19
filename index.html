@@ -24,7 +24,13 @@ $(document).ready(function() {
   $('#summernote').summernote({
     toolbar : [
       ['fileuploader', ['fileuploader', 'simple-fileuploader']]
-    ] 
+    ],
+    fileuploader : {
+      zIndex: 100,
+      upload : {
+        accept: 'image/*'
+      }
+    }
   });
 });
 

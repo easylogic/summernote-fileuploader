@@ -10,6 +10,7 @@ $("#summernote").summernote({
         fileuploader : {
 
             upload : {
+                accept : 'image/*',
                 itemClass : 'xxx xxx xxx',
                 itemClass : function (file, i) {
                     return ['xxx' +  'ab' + 'xxx'];
@@ -73,6 +74,8 @@ $("#summernote").summernote({
                 },
                 method : 'post',
                 method : 'get',
+                url : 'base64',         // 이미지 datauri 형태로 그대로 넣는다. 
+                // 나머지 url 은 실제로 서버로 전송한다. 
                 url : {
                     host : '',
                     port : '',

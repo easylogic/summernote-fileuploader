@@ -1,16 +1,13 @@
 import './index.scss'
 import Dom from '../../../util/Dom'
-import FileManager from './FileManager'
-import UploadPanel from './UploadPanel'
-import PreviewPanel from './PreviewPanel'
 
-class UploadServicePanel {
+class DirectoryServicePanel {
   constructor(uploader, context) {
     this.uploader = uploader;
     this.context = context; 
 
-    this.id = 'upload';
-    this.title = "Upload";
+    this.id = 'directory';
+    this.title = "Directory";
     this.options = this.getOptions();
 
     this.initialize();
@@ -20,9 +17,6 @@ class UploadServicePanel {
     return this.title; 
   }
 
-  openFileDialog () {
-    this.uploadPanel.openFileDialog();
-  }
 
   getOptions () {
     return this.uploader.getOptions('upload') || {};
@@ -30,18 +24,12 @@ class UploadServicePanel {
 
   initialize () {
 
-    this.fileManager = new FileManager(this, this.context);
-    this.previewPanel = new PreviewPanel(this, this.context);
-    this.uploadPanel = new UploadPanel(this, this.context);
 
-    this.$el = new Dom('div', 'summernote-upload-service-panel', {
+    this.$el = new Dom('div', 'summernote-directory-service-panel', {
       droppable : true 
     });
 
-    this.$el.append(this.uploadPanel.$el);
-    this.$el.append(this.previewPanel.$el);
 
-    this.initializeEvent();
   }
 
   drop (e) {
@@ -52,41 +40,16 @@ class UploadServicePanel {
     console.log('dragover', e);
   }
 
-  initializeEvent () {
-
-    this.$$drop = this.drop.bind(this);
-    this.$$dragover = this.dragover.bind(this);
-
-    this.$el.addEventListener('drop', this.$$drop);
-    this.$el.addEventListener('dragover', this.$$dragover);    
-  }
-
   destroy () {
     super.destroy();
 
     this.$el.removeEventListener('drop', this.$$drop);
     this.$el.removeEventListener('dragover', this.$$dragover);    
 
-    this.uploadPanel.destroy();
-    this.previewPanel.destroy();
-
-    this.uploadPanel = null;
-    this.previewPanel = null; 
-
-
     this.$el.remove();
     this.$el = null; 
   }
 
-  addFile (files) {
-
-    if (!Array.isArray(files)) {
-      files = [files];
-    }
-
-    this.fileManager.addFiles(files);
-    this.previewPanel.refresh();
-  }
 
   getFiles () {
     return this.fileManager.getFiles(); 
@@ -119,4 +82,4 @@ class UploadServicePanel {
 
 }
 
-export default UploadServicePanel;
+export default DirectoryServicePanel;

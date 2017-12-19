@@ -193,9 +193,9 @@ var Dom = function () {
   function Dom(tag, className, attr) {
     classCallCheck(this, Dom);
 
-    this.tag = tag;
-    this.className = className;
-    this.attr = attr;
+    this._tag = tag;
+    this._className = className;
+    this._attr = attr;
 
     this.initialize();
   }
@@ -203,22 +203,39 @@ var Dom = function () {
   createClass(Dom, [{
     key: 'initialize',
     value: function initialize() {
-      if (typeof this.tag != 'string') {
-        this.el = this.tag;
+      if (typeof this._tag != 'string') {
+        this.el = this._tag;
       } else {
-        var el = document.createElement(this.tag);
+        var el = document.createElement(this._tag);
 
         this.uniqId = Counter++;
 
-        el.className = this.className;
+        el.className = this._className;
 
-        var attr = this.attr || {};
+        var attr = this._attr || {};
         for (var k in attr) {
           el.setAttribute(k, attr[k]);
         }
 
         this.el = el;
       }
+    }
+  }, {
+    key: 'attr',
+    value: function attr(key, value) {
+      if (arguments.length == 1) {
+        if (typeof key === 'string') {
+          return this.el.getAttribute(key);
+        } else if ((typeof key === 'undefined' ? 'undefined' : _typeof(key)) === 'object') {
+          for (var k in key) {
+            this.el.setAttribute(k, key[k]);
+          }
+        }
+      } else if (arguments.length == 2) {
+        this.el.setAttribute(key, value);
+      }
+
+      return this;
     }
   }, {
     key: 'closest',
@@ -263,11 +280,24 @@ var Dom = function () {
       return this;
     }
   }, {
+    key: 'find',
+    value: function find(selector) {
+      return new Dom(this.el.querySelector(selector));
+    }
+  }, {
+    key: 'findAll',
+    value: function findAll(selector) {
+      return [].concat(toConsumableArray(this.el.querySelectorAll(selector))).map(function (node) {
+        return new Dom(node);
+      });
+    }
+  }, {
     key: 'html',
     value: function html(_html) {
       if (arguments.length == 0) {
         return this.el.innerHTML;
       }
+
       if (typeof _html === 'string') {
         // html 
         this.el.innerHTML = _html;
@@ -283,10 +313,10 @@ var Dom = function () {
         });
 
         this.el.innerHTML = '';
-        this.el.appendChild(fragment);
+        this.append(fragment);
       } else if ((typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
         // dom 
-        this.el.appendChlid(_html);
+        this.append(_html);
       }
 
       return this;
@@ -437,9 +467,19 @@ var Dom = function () {
       this.el.addEventListener(eventName, callback, opt1 || false);
     }
   }, {
+    key: 'on',
+    value: function on(eventName, callback, opt1) {
+      this.addEventListener(eventName, callback, opt1);
+    }
+  }, {
     key: 'removeEventListener',
     value: function removeEventListener(eventName, callback, opt1) {
       this.el.removeEventListener(eventName, callback);
+    }
+  }, {
+    key: 'off',
+    value: function off(eventName, callback, opt1) {
+      this.removeEventListener(eventName, callback, opt1);
     }
   }], [{
     key: 'trim',
@@ -746,10 +786,11 @@ var UploadPanel = function () {
     key: 'initialize',
     value: function initialize() {
 
-      this.$el = new Dom('div', 'summernote-fileuploader-upload-panel');
+      this.$el = new Dom('div', 'upload-panel');
       this.$fileInput = new Dom('input', '', {
         type: 'file',
         multiple: true,
+        placeholder: '클릭하거나 파일을 끌어다 놓습니다.',
         accept: this.options.accept || '*/*'
       });
 
@@ -886,7 +927,7 @@ var PreviewPanel = function () {
     key: 'initialize',
     value: function initialize() {
 
-      this.$el = new Dom('div', 'summernote-fileuploader-preview-panel');
+      this.$el = new Dom('div', 'preview-panel');
 
       if (this.previewClassFunc) {
         this.$el.addClass(this.previewClassFunc());
@@ -987,12 +1028,12 @@ var UploadServicePanel = function () {
       this.previewPanel = new PreviewPanel(this, this.context);
       this.uploadPanel = new UploadPanel(this, this.context);
 
-      this.$panel = new Dom('div', 'summernote-upload-service-panel', {
+      this.$el = new Dom('div', 'summernote-upload-service-panel', {
         droppable: true
       });
 
-      this.$panel.append(this.uploadPanel.$el);
-      this.$panel.append(this.previewPanel.$el);
+      this.$el.append(this.uploadPanel.$el);
+      this.$el.append(this.previewPanel.$el);
 
       this.initializeEvent();
     }
@@ -1013,16 +1054,16 @@ var UploadServicePanel = function () {
       this.$$drop = this.drop.bind(this);
       this.$$dragover = this.dragover.bind(this);
 
-      this.$panel.addEventListener('drop', this.$$drop);
-      this.$panel.addEventListener('dragover', this.$$dragover);
+      this.$el.addEventListener('drop', this.$$drop);
+      this.$el.addEventListener('dragover', this.$$dragover);
     }
   }, {
     key: 'destroy',
     value: function destroy() {
       get(UploadServicePanel.prototype.__proto__ || Object.getPrototypeOf(UploadServicePanel.prototype), 'destroy', this).call(this);
 
-      this.$panel.removeEventListener('drop', this.$$drop);
-      this.$panel.removeEventListener('dragover', this.$$dragover);
+      this.$el.removeEventListener('drop', this.$$drop);
+      this.$el.removeEventListener('dragover', this.$$dragover);
 
       this.uploadPanel.destroy();
       this.previewPanel.destroy();
@@ -1030,8 +1071,8 @@ var UploadServicePanel = function () {
       this.uploadPanel = null;
       this.previewPanel = null;
 
-      this.$panel.remove();
-      this.$panel = null;
+      this.$el.remove();
+      this.$el = null;
     }
   }, {
     key: 'addFile',
@@ -1084,6 +1125,100 @@ var UploadServicePanel = function () {
   return UploadServicePanel;
 }();
 
+var DirectoryServicePanel = function () {
+  function DirectoryServicePanel(uploader, context) {
+    classCallCheck(this, DirectoryServicePanel);
+
+    this.uploader = uploader;
+    this.context = context;
+
+    this.id = 'directory';
+    this.title = "Directory";
+    this.options = this.getOptions();
+
+    this.initialize();
+  }
+
+  createClass(DirectoryServicePanel, [{
+    key: 'getTitle',
+    value: function getTitle() {
+      return this.title;
+    }
+  }, {
+    key: 'getOptions',
+    value: function getOptions() {
+      return this.uploader.getOptions('upload') || {};
+    }
+  }, {
+    key: 'initialize',
+    value: function initialize() {
+
+      this.$el = new Dom('div', 'summernote-directory-service-panel', {
+        droppable: true
+      });
+    }
+  }, {
+    key: 'drop',
+    value: function drop(e) {
+      console.log('drop', e);
+    }
+  }, {
+    key: 'dragover',
+    value: function dragover(e) {
+      console.log('dragover', e);
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      get(DirectoryServicePanel.prototype.__proto__ || Object.getPrototypeOf(DirectoryServicePanel.prototype), 'destroy', this).call(this);
+
+      this.$el.removeEventListener('drop', this.$$drop);
+      this.$el.removeEventListener('dragover', this.$$dragover);
+
+      this.$el.remove();
+      this.$el = null;
+    }
+  }, {
+    key: 'getFiles',
+    value: function getFiles() {
+      return this.fileManager.getFiles();
+    }
+
+    /* upload event method  */
+
+  }, {
+    key: 'success',
+    value: function success(file, index) {
+      if (typeof this.options.success === 'function') {
+        this.options.success(file, index);
+      }
+    }
+  }, {
+    key: 'progress',
+    value: function progress(file, index, loaded, total) {
+      if (typeof this.options.progress === 'function') {
+        this.options.progress(file, index, loaded, total);
+      }
+    }
+  }, {
+    key: 'fail',
+    value: function fail(file, index) {
+      if (typeof this.options.fail === 'function') {
+        this.options.fail(file, index);
+      }
+    }
+  }, {
+    key: 'abort',
+    value: function abort(file, index) {
+      if (typeof this.options.abort === 'function') {
+        this.options.abort(file, index);
+      }
+    }
+  }]);
+  return DirectoryServicePanel;
+}();
+
+// service 
 var FileUploader = function (_SummernotePlugin) {
   inherits(FileUploader, _SummernotePlugin);
 
@@ -1093,6 +1228,7 @@ var FileUploader = function (_SummernotePlugin) {
     var _this = possibleConstructorReturn(this, (FileUploader.__proto__ || Object.getPrototypeOf(FileUploader)).call(this, context));
 
     _this.services = {};
+    _this.activeService = '';
     return _this;
   }
 
@@ -1111,7 +1247,7 @@ var FileUploader = function (_SummernotePlugin) {
         contents: 'Uploader',
         tooltip: 'File Uploader',
         click: function click() {
-          _this2.$el.show();
+          _this2.$back.show();
         }
       });
 
@@ -1133,8 +1269,8 @@ var FileUploader = function (_SummernotePlugin) {
     }
   }, {
     key: 'addService',
-    value: function addService(service) {
-      this.services[service.id] = service;
+    value: function addService(service, key) {
+      this.services[key || service.id] = service;
     }
   }, {
     key: 'removeService',
@@ -1149,18 +1285,79 @@ var FileUploader = function (_SummernotePlugin) {
       get(FileUploader.prototype.__proto__ || Object.getPrototypeOf(FileUploader.prototype), 'initialize', this).call(this);
 
       this.addService(new UploadServicePanel(this, this.context));
+      this.addService(new DirectoryServicePanel(this, this.context));
 
+      this.setActiveService('upload'); // upload 서비스를 처음으로 선택 
       this.initializeUI();
       this.render();
+
+      this.initializeEvent();
+    }
+  }, {
+    key: 'setActiveService',
+    value: function setActiveService(id) {
+      this.activeService = id;
+    }
+  }, {
+    key: 'getActiveService',
+    value: function getActiveService() {
+      return this.services[this.activeService];
+    }
+  }, {
+    key: 'clickSelectButton',
+    value: function clickSelectButton(e) {
+      this.getActiveService().select();
+    }
+  }, {
+    key: 'clickTab',
+    value: function clickTab(e) {
+      var $target = new Dom(e.target);
+
+      if ($target.hasClass('active')) {} else {
+        this.setActiveService($target.attr('data-id'));
+        this.reloadTab();
+        this.reloadTabContents();
+      }
+    }
+  }, {
+    key: 'reloadTab',
+    value: function reloadTab() {
+      this.$tab.find('.active').removeClass('active');
+      this.$tab.find('[data-id=' + this.activeService + ']').addClass('active');
+    }
+  }, {
+    key: 'reloadTabContents',
+    value: function reloadTabContents() {
+      this.$tabContents.find('.active').removeClass('active');
+      this.$tabContents.find('[data-id=' + this.activeService + ']').addClass('active');
+    }
+  }, {
+    key: 'initializeEvent',
+    value: function initializeEvent() {
+      this.$$selectFunc = this.clickSelectButton.bind(this);
+
+      this.$select.on('click', this.$$selectFunc);
+
+      this.$$clickTab = this.clickTab.bind(this);
+      this.$tab.on('click', this.$$clickTab);
     }
   }, {
     key: 'initializeUI',
     value: function initializeUI() {
+
+      this.$back = new Dom('div', 'summernote-fileuploader-back');
+
+      if (this.getOptions().zIndex) {
+        this.$back.css('z-index', this.getOptions().zIndex);
+      }
+
       this.$el = new Dom('div', 'summernote-fileuploader', {
         droppable: true
       });
 
-      this.$el.appendTo('body');
+      this.$back.append(this.$el);
+
+      this.$back.appendTo('body');
     }
   }, {
     key: 'render',
@@ -1168,55 +1365,77 @@ var FileUploader = function (_SummernotePlugin) {
 
       this.$el.empty();
 
-      this.createTab();
-      this.createTabContent();
-      this.createFooter();
+      this.$tab = new Dom('div', 'tabs');
+      this.$tabContents = new Dom('div', 'tab-contents');
+      this.$footer = new Dom('div', 'footer');
 
       this.$el.append(this.$tab);
       this.$el.append(this.$tabContents);
       this.$el.append(this.$footer);
+
+      this.renderTab();
+      this.renderTabContent();
+      this.renderFooter();
     }
   }, {
-    key: 'createTab',
-    value: function createTab() {
+    key: 'renderTab',
+    value: function renderTab() {
       var _this3 = this;
 
-      this.$tab = new Dom('div', 'summernote-fileuploader-tabs');
+      this.$tab.empty();
 
-      var service = this.getOptions().service || Object.keys(this.services);
+      var service = Object.keys(this.services);
 
       service.forEach(function (id) {
         var ServiceObject = _this3.services[id];
-        var $tabItem = new Dom('div', 'summernote-fileuploader-tab-item').html(ServiceObject.getTitle());
-        $tab.append($tabItem);
+
+        var $tabItem = new Dom('div', 'tab-item', {
+          'data-id': id
+        }).html(ServiceObject.getTitle());
+
+        if (id == _this3.activeService) {
+          $tabItem.addClass('active');
+        }
+
+        _this3.$tab.append($tabItem);
       });
     }
   }, {
-    key: 'createTabContent',
-    value: function createTabContent() {
+    key: 'renderTabContent',
+    value: function renderTabContent() {
       var _this4 = this;
 
-      this.$tabContents = new Dom('div', 'summernote-fileuploader-tab-contents');
-      var service = this.getOptions().service || Object.keys(this.services);
+      this.$tabContents.empty();
+
+      var service = Object.keys(this.services);
 
       service.forEach(function (id) {
         var ServiceObject = _this4.services[id];
-        var $tabContentItem = new Dom('div', 'summernote-fileuploader-tab-contents-item').html(ServiceObject.$el);
-        $tabContents.append($tabContentItem);
+        var $tabContentItem = new Dom('div', 'tab-contents-item', {
+          'data-id': id
+        }).html(ServiceObject.$el);
+
+        if (id == _this4.activeService) {
+          $tabContentItem.addClass('active');
+        }
+
+        _this4.$tabContents.append($tabContentItem);
       });
     }
   }, {
-    key: 'createFooter',
-    value: function createFooter() {
-      this.$footer = new Dom('div', 'summernote-fileuploader-footer');
+    key: 'renderFooter',
+    value: function renderFooter() {
+      this.$footer.empty();
 
-      this.$select = new Dom('button', 'summernote-fileuploader-select-button');
+      this.$select = new Dom('button', 'select-button').html("Select");
       this.$footer.append(this.$select);
     }
   }, {
     key: 'destroy',
     value: function destroy() {
       get(FileUploader.prototype.__proto__ || Object.getPrototypeOf(FileUploader.prototype), 'destroy', this).call(this);
+
+      this.$select.off('click', this.$$selectFunc);
 
       for (var key in this.services) {
         if (this.services[key]) {

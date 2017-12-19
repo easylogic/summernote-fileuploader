@@ -9,16 +9,16 @@ import minify from 'rollup-plugin-minify'
 export default {
   input: 'src/index.js',
   output: {
-    file: 'dist/' + packageJSON.name + '.js',
+    file: 'dist/real/' + packageJSON.name + '.js',
     format: 'umd'
   },
   plugins : [
-    scss({output : 'dist/' + packageJSON.name + '.css'}),
+    scss({output : 'dist/real/' + packageJSON.name + '.css'}),
     babel({
       exclude: 'node_modules/**',
       presets : 'es2015-rollup'
     }),
     uglify(),
-    minify({ iife : 'dist/' + packageJSON.name + '.min.js'})
+    minify({ iife : 'dist/real/' + packageJSON.name + '.min.js'})
   ]
 };

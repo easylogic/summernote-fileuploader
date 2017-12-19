@@ -5,11 +5,13 @@ import Dom from '../util/Dom'
 
 // service 
 import UploadServicePanel from './service/upload/index'
+import DirectoryServicePanel from './service/directory/index'
 
 class FileUploader extends SummernotePlugin {
   constructor(context) {
     super(context);    
     this.services = {};     
+    this.activeService = '';
   }
 
   // new button 
@@ -21,7 +23,7 @@ class FileUploader extends SummernotePlugin {
       contents: 'Uploader',
       tooltip: 'File Uploader',
       click: () => {
-        this.$el.show();
+        this.$back.show();
       }
     });
 
@@ -41,8 +43,8 @@ class FileUploader extends SummernotePlugin {
     return options;
   }
 
-  addService (service) {
-    this.services[service.id] = service; 
+  addService (service, key) {
+    this.services[key || service.id] = service; 
   }
 
   removeService (id) {
@@ -55,66 +57,147 @@ class FileUploader extends SummernotePlugin {
     super.initialize();
 
     this.addService(new UploadServicePanel(this, this.context));
+    this.addService(new DirectoryServicePanel(this, this.context));    
 
+    this.setActiveService('upload');  // upload 서비스를 처음으로 선택 
     this.initializeUI();
     this.render();
+
+    this.initializeEvent();
+  }
+
+  setActiveService (id) {
+    this.activeService = id; 
+  }
+
+  getActiveService() {
+    return this.services[this.activeService];
+  }
+
+  clickSelectButton (e) {
+    this.getActiveService().select();
+  }
+
+  clickTab (e) {
+    let $target = new Dom(e.target);
+
+    if ($target.hasClass('active')) {
+
+    } else {
+      this.setActiveService($target.attr('data-id'))
+      this.reloadTab();
+      this.reloadTabContents();    
+    }
+  }
+
+  reloadTab () {
+    this.$tab.find('.active').removeClass('active');
+    this.$tab.find('[data-id='+this.activeService+']').addClass('active');
+  }
+
+  reloadTabContents() {
+    this.$tabContents.find('.active').removeClass('active');
+    this.$tabContents.find('[data-id='+this.activeService+']').addClass('active');
+  }
+
+  initializeEvent() {
+    this.$$selectFunc = this.clickSelectButton.bind(this);
+
+    this.$select.on('click', this.$$selectFunc);
+
+    this.$$clickTab = this.clickTab.bind(this);
+    this.$tab.on('click', this.$$clickTab);
   }
 
   initializeUI () {
+
+    this.$back = new Dom('div', 'summernote-fileuploader-back');
+
+    if (this.getOptions().zIndex) {
+      this.$back.css('z-index', this.getOptions().zIndex);
+    }
+
+
     this.$el = new Dom('div', 'summernote-fileuploader', {
       droppable : true 
     });
 
-    this.$el.appendTo('body');    
+    this.$back.append(this.$el);
+
+    this.$back.appendTo('body');    
   }
 
   render () {
 
     this.$el.empty();
 
-    this.createTab();
-    this.createTabContent();
-    this.createFooter();
+    this.$tab = new Dom('div', 'tabs');
+    this.$tabContents = new Dom('div', 'tab-contents');
+    this.$footer = new Dom('div', 'footer');
 
     this.$el.append(this.$tab);
     this.$el.append(this.$tabContents);
     this.$el.append(this.$footer);
+
+    this.renderTab();
+    this.renderTabContent();
+    this.renderFooter();
+    
   }
 
-  createTab () {
-    this.$tab = new Dom('div', 'summernote-fileuploader-tabs');
+  renderTab () {
+    this.$tab.empty();
 
-    let service = this.getOptions().service || Object.keys(this.services);
+    let service = Object.keys(this.services);
     
     service.forEach((id) => {
       const ServiceObject = this.services[id];
-      const $tabItem = new Dom('div', 'summernote-fileuploader-tab-item').html(ServiceObject.getTitle());
-      $tab.append($tabItem);
+
+      let $tabItem = new Dom('div', 'tab-item', {
+        'data-id': id 
+      }).html(ServiceObject.getTitle());
+
+      if (id == this.activeService) {
+        $tabItem.addClass('active');
+      }
+
+      this.$tab.append($tabItem);
     })
 
+
   }
 
-  createTabContent () {
-    this.$tabContents = new Dom('div', 'summernote-fileuploader-tab-contents');
-    let service = this.getOptions().service || Object.keys(this.services);
+  renderTabContent () {
+    this.$tabContents.empty();
+
+    let service = Object.keys(this.services);
     
     service.forEach((id) => {
       const ServiceObject = this.services[id];
-      const $tabContentItem = new Dom('div', 'summernote-fileuploader-tab-contents-item').html(ServiceObject.$el);
-      $tabContents.append($tabContentItem);
+      let $tabContentItem = new Dom('div', 'tab-contents-item', {
+        'data-id' : id 
+      }).html(ServiceObject.$el);
+
+      if (id == this.activeService) {
+        $tabContentItem.addClass('active');
+      }
+
+      this.$tabContents.append($tabContentItem);
     })    
+
   }
 
-  createFooter() {
-    this.$footer = new Dom('div', 'summernote-fileuploader-footer');
+  renderFooter() {
+    this.$footer.empty();
 
-    this.$select = new Dom('button', 'summernote-fileuploader-select-button');
+    this.$select = new Dom('button', 'select-button').html("Select");
     this.$footer.append(this.$select);
-
   }
 
   destroy () {
     super.destroy();
+
+    this.$select.off('click', this.$$selectFunc);
 
     for(let key in this.services) {
       if (this.services[key]) {

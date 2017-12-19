@@ -1,48 +1,100 @@
-$width: 400px;
-$height: 400px;
-$upload-border: 1px solid #ececec;
+$width: 600px;
+$height: 600px;
+$border-color: #ececec;
+$upload-border: 1px solid $border-color;
 
-.summernote-fileuploader {
-  position: relative;
-  width: $width;
-  height: $height;
-  box-sizing:border-box;
-  border: $upload-border; 
+.summernote-fileuploader-back {
+  position:fixed;
+  left:0px;
+  right:0px;
+  bottom:0px;
+  top:0px;
+  z-index: 10000;
+  background-color: rgba(56, 68, 80, 0.71);
 
-  > .tabs {
+
+  .summernote-fileuploader {
     position: absolute;
-    left:0px;
-    right:0px;
-    top:0px;
-    height: 40px;
-    display:flex;
+    left:50%;
+    top:50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: $width;
+    height: $height;
+    box-sizing:border-box;
+    background-color:white;
+    border-radius: 5px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 
-    > .tab-item {
-      flex:1;
-      padding:5px 10px;
-      text-decoration: underline;
+    > .tabs {
+      position: absolute;
+      left:0px;
+      right:0px;
+      top:0px;
+      height: 40px;
+      display:flex;
+      border-bottom:$upload-border;
+
+      > .tab-item {
+        flex:1;
+        padding:10px 10px;
+        text-decoration: none;      
+        box-sizing:border-box;
+        text-align:center;
+
+        &.active {
+          font-weight: bold;
+          background-color: rgba(0, 0, 0, 0.2);
+          color:#333;
+
+        }
+      }
+    
+      > .tab-item.selected {
+        font-weight:bold;
+        color:blue;
+      }
     }
-  
-    > .tab-item.selected {
-      font-weight:bold;
-      color:blue;
+
+    > .tab-contents {
+      position:absolute;
+      left: 0px;
+      right:0px;
+      top:40px;
+      bottom:40px;
+
+      > .tab-contents-item {
+        position: absolute;
+        left:0px;
+        right:0px;
+        bottom:0px;
+        top:0px;
+        display: none;
+
+        &.active {
+          display: block;
+        }
+      }
+
+
     }
-  }
 
-  > .tab-contents {
-    position:absolute;
-    left: 0px;
-    right:0px;
-    top:40px;
-    bottom:40px;
-  }
+    > .footer {
+      position:absolute;
+      left: 0px;
+      right:0px;
+      height:40px;
+      bottom:0px;
+      text-align: right;
+      box-sizing: border-box;
+      padding: 5px 10px;
+      border-top: $upload-border;
 
-  > .footer {
-    position:absolute;
-    left: 0px;
-    right:0px;
-    top:40px;
-    bottom:40px;
-  }
+      .select-button {
+        padding:3px 10px;
+        border-radius: 0px;
+        border: $upload-border;
+      }
+    }
 
+  }
 }

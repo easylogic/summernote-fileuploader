@@ -1,78 +1,127 @@
 @charset "UTF-8";
-.summernote-fileuploader {
-  position: relative;
-  width: 400px;
-  height: 400px;
-  box-sizing: border-box;
-  border: 1px solid #ececec; }
-  .summernote-fileuploader > .tabs {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    height: 40px;
-    display: flex; }
-    .summernote-fileuploader > .tabs > .tab-item {
-      flex: 1;
-      padding: 5px 10px;
-      text-decoration: underline; }
-    .summernote-fileuploader > .tabs > .tab-item.selected {
-      font-weight: bold;
-      color: blue; }
-  .summernote-fileuploader > .tab-contents {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 40px;
-    bottom: 40px; }
-  .summernote-fileuploader > .footer {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 40px;
-    bottom: 40px; }
-
-/* upload panel  */
-.summernote-fileuploader-upload-panel {
-  position: absolute;
+.summernote-fileuploader-back {
+  position: fixed;
   left: 0px;
   right: 0px;
-  height: 100px;
   bottom: 0px;
-  background-color: red; }
-  .summernote-fileuploader-upload-panel > input[type=file] {
+  top: 0px;
+  z-index: 10000;
+  background-color: rgba(56, 68, 80, 0.71); }
+  .summernote-fileuploader-back .summernote-fileuploader {
     position: absolute;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    top: 0px;
-    cursor: pointer;
-    outline: none; }
-    .summernote-fileuploader-upload-panel > input[type=file]:after {
-      display: block;
-      content: "클릭해주세요.";
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 600px;
+    height: 600px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); }
+    .summernote-fileuploader-back .summernote-fileuploader > .tabs {
       position: absolute;
       left: 0px;
-      top: 0px;
       right: 0px;
+      top: 0px;
+      height: 40px;
+      display: flex;
+      border-bottom: 1px solid #ececec; }
+      .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item {
+        flex: 1;
+        padding: 10px 10px;
+        text-decoration: none;
+        box-sizing: border-box;
+        text-align: center; }
+        .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item.active {
+          font-weight: bold;
+          background-color: rgba(0, 0, 0, 0.2);
+          color: #333; }
+      .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item.selected {
+        font-weight: bold;
+        color: blue; }
+    .summernote-fileuploader-back .summernote-fileuploader > .tab-contents {
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      top: 40px;
+      bottom: 40px; }
+      .summernote-fileuploader-back .summernote-fileuploader > .tab-contents > .tab-contents-item {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        top: 0px;
+        display: none; }
+        .summernote-fileuploader-back .summernote-fileuploader > .tab-contents > .tab-contents-item.active {
+          display: block; }
+    .summernote-fileuploader-back .summernote-fileuploader > .footer {
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      height: 40px;
       bottom: 0px;
-      background-color: white; }
+      text-align: right;
+      box-sizing: border-box;
+      padding: 5px 10px;
+      border-top: 1px solid #ececec; }
+      .summernote-fileuploader-back .summernote-fileuploader > .footer .select-button {
+        padding: 3px 10px;
+        border-radius: 0px;
+        border: 1px solid #ececec; }
 
-/* preview panel  */
-.summernote-fileuploader-preview-panel {
+.summernote-upload-service-panel {
   position: absolute;
   left: 0px;
   right: 0px;
   top: 0px;
-  bottom: 100px;
-  background-color: yellow;
-  overflow: auto; }
-  .summernote-fileuploader-preview-panel > .view-item {
-    display: inline-block;
-    vertical-align: middle;
-    width: 100px;
-    height: 100px;
+  bottom: 0px; }
+  .summernote-upload-service-panel .upload-panel {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    height: 50px;
+    bottom: 0px;
     box-sizing: border-box;
-    padding: 10px;
-    margin: 5px;
-    background-color: black; }
+    border-top: 1px solid #ececec; }
+    .summernote-upload-service-panel .upload-panel > input[type=file] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      outline: none;
+      box-sizing: border-box; }
+      .summernote-upload-service-panel .upload-panel > input[type=file]:after {
+        display: block;
+        content: attr(placeholder);
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: white; }
+  .summernote-upload-service-panel .preview-panel {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 50px;
+    top: 0px;
+    overflow: auto; }
+    .summernote-upload-service-panel .preview-panel > .view-item {
+      display: inline-block;
+      vertical-align: middle;
+      width: 100px;
+      height: 100px;
+      box-sizing: border-box;
+      padding: 10px;
+      margin: 5px;
+      background-color: black; }
+
+.summernote-directory-service-panel {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  content: "디렉토리 서비스"; }

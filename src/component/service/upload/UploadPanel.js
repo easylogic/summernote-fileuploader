@@ -10,10 +10,11 @@ class UploadPanel {
 
   initialize () {
 
-    this.$el = new Dom('div', 'summernote-fileuploader-upload-panel');
+    this.$el = new Dom('div', 'upload-panel');
     this.$fileInput = new Dom('input', '', { 
       type : 'file', 
       multiple : true, 
+      placeholder : '클릭하거나 파일을 끌어다 놓습니다.',
       accept : this.options.accept || '*/*' 
     });
     

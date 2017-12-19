@@ -82,7 +82,7 @@ class PreviewPanel {
   
   initialize () {
 
-    this.$el = new Dom('div', 'summernote-fileuploader-preview-panel');
+    this.$el = new Dom('div', 'preview-panel');
 
     if (this.previewClassFunc) {
       this.$el.addClass(this.previewClassFunc());
