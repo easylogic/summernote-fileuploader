@@ -1218,7 +1218,6 @@ var DirectoryServicePanel = function () {
   return DirectoryServicePanel;
 }();
 
-// service 
 var FileUploader = function (_SummernotePlugin) {
   inherits(FileUploader, _SummernotePlugin);
 

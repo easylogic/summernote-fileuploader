@@ -1,5 +1,5 @@
-$width: 600px;
-$height: 600px;
+$width: 740px;
+$height: 500px;
 $border-color: #ececec;
 $upload-border: 1px solid $border-color;
 
@@ -27,15 +27,14 @@ $upload-border: 1px solid $border-color;
 
     > .tabs {
       position: absolute;
-      left:0px;
-      right:0px;
+      left:0px; 
       top:0px;
-      height: 40px;
-      display:flex;
+      width:120px;
+      bottom:0px;
       border-bottom:$upload-border;
 
       > .tab-item {
-        flex:1;
+        display:block;
         padding:10px 10px;
         text-decoration: none;      
         box-sizing:border-box;
@@ -57,10 +56,12 @@ $upload-border: 1px solid $border-color;
 
     > .tab-contents {
       position:absolute;
-      left: 0px;
+      left: 120px;
       right:0px;
-      top:40px;
+      top:0px;
       bottom:40px;
+      box-sizing:border-box;
+      border-left:1px solid #ececec;
 
       > .tab-contents-item {
         position: absolute;

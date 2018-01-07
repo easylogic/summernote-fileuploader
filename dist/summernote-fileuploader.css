@@ -12,8 +12,8 @@
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    width: 600px;
-    height: 600px;
+    width: 740px;
+    height: 500px;
     box-sizing: border-box;
     background-color: white;
     border-radius: 5px;
@@ -21,13 +21,12 @@
     .summernote-fileuploader-back .summernote-fileuploader > .tabs {
       position: absolute;
       left: 0px;
-      right: 0px;
       top: 0px;
-      height: 40px;
-      display: flex;
+      width: 120px;
+      bottom: 0px;
       border-bottom: 1px solid #ececec; }
       .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item {
-        flex: 1;
+        display: block;
         padding: 10px 10px;
         text-decoration: none;
         box-sizing: border-box;
@@ -41,10 +40,12 @@
         color: blue; }
     .summernote-fileuploader-back .summernote-fileuploader > .tab-contents {
       position: absolute;
-      left: 0px;
+      left: 120px;
       right: 0px;
-      top: 40px;
-      bottom: 40px; }
+      top: 0px;
+      bottom: 40px;
+      box-sizing: border-box;
+      border-left: 1px solid #ececec; }
       .summernote-fileuploader-back .summernote-fileuploader > .tab-contents > .tab-contents-item {
         position: absolute;
         left: 0px;
