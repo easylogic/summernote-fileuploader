@@ -168,6 +168,7 @@ var SummernotePlugin = function () {
         _this.context.memo(key, _this[key].bind(_this));
       });
 
+      // set summernote.xxx event 
       this.filterProps('summernote.').forEach(function (key) {
         _this.events[key] = _this[key].bind(_this);
       });
@@ -790,7 +791,7 @@ var UploadPanel = function () {
       this.$fileInput = new Dom('input', '', {
         type: 'file',
         multiple: true,
-        placeholder: '클릭하거나 파일을 끌어다 놓습니다.',
+        placeholder: 'Attach files by dragging & dropping, selecting them, or pasting from the clipboard.',
         accept: this.options.accept || '*/*'
       });
 
@@ -1040,12 +1041,13 @@ var UploadServicePanel = function () {
   }, {
     key: 'drop',
     value: function drop(e) {
-      console.log('drop', e);
+      e.preventDefault();
+      this.addFile([].concat(toConsumableArray(e.dataTransfer.files)));
     }
   }, {
     key: 'dragover',
     value: function dragover(e) {
-      console.log('dragover', e);
+      e.preventDefault();
     }
   }, {
     key: 'initializeEvent',
@@ -1054,16 +1056,16 @@ var UploadServicePanel = function () {
       this.$$drop = this.drop.bind(this);
       this.$$dragover = this.dragover.bind(this);
 
-      this.$el.addEventListener('drop', this.$$drop);
-      this.$el.addEventListener('dragover', this.$$dragover);
+      this.$el.on('drop', this.$$drop);
+      this.$el.on('dragover', this.$$dragover);
     }
   }, {
     key: 'destroy',
     value: function destroy() {
       get(UploadServicePanel.prototype.__proto__ || Object.getPrototypeOf(UploadServicePanel.prototype), 'destroy', this).call(this);
 
-      this.$el.removeEventListener('drop', this.$$drop);
-      this.$el.removeEventListener('dragover', this.$$dragover);
+      this.$el.off('drop', this.$$drop);
+      this.$el.off('dragover', this.$$dragover);
 
       this.uploadPanel.destroy();
       this.previewPanel.destroy();

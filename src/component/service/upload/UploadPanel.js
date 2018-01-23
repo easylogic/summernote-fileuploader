@@ -14,7 +14,7 @@ class UploadPanel {
     this.$fileInput = new Dom('input', '', { 
       type : 'file', 
       multiple : true, 
-      placeholder : '클릭하거나 파일을 끌어다 놓습니다.',
+      placeholder : `Attach files by dragging & dropping, selecting them, or pasting from the clipboard.`,
       accept : this.options.accept || '*/*' 
     });
     

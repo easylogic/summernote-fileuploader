@@ -30,8 +30,7 @@ $upload-border: 1px solid $border-color;
       left:0px; 
       top:0px;
       width:120px;
-      bottom:0px;
-      border-bottom:$upload-border;
+      bottom:40px;
 
       > .tab-item {
         display:block;
@@ -39,6 +38,12 @@ $upload-border: 1px solid $border-color;
         text-decoration: none;      
         box-sizing:border-box;
         text-align:center;
+        cursor: pointer;
+        border-bottom:1px solid rgba(0, 0, 0, 0.05);
+
+        > * {
+          pointer-events: none;
+        }
 
         &.active {
           font-weight: bold;

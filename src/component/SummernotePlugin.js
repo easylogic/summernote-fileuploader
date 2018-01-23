@@ -20,9 +20,12 @@ class SummernotePlugin {
       this.context.memo(key, this[key].bind(this));
     });
 
+    // set summernote.xxx event 
     this.filterProps('summernote.').forEach(key => {
       this.events[key] = this[key].bind(this);
     });
+
+
   }
 
   invoke () {
@@ -34,7 +37,7 @@ class SummernotePlugin {
   }
 
   destroy() {
-
+    
   }
 
 

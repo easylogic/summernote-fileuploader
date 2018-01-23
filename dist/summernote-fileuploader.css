@@ -23,14 +23,17 @@
       left: 0px;
       top: 0px;
       width: 120px;
-      bottom: 0px;
-      border-bottom: 1px solid #ececec; }
+      bottom: 40px; }
       .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item {
         display: block;
         padding: 10px 10px;
         text-decoration: none;
         box-sizing: border-box;
-        text-align: center; }
+        text-align: center;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item > * {
+          pointer-events: none; }
         .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item.active {
           font-weight: bold;
           background-color: rgba(0, 0, 0, 0.2);
@@ -101,7 +104,9 @@
         bottom: 0px;
         padding: 10px;
         box-sizing: border-box;
-        background-color: white; }
+        background-color: white;
+        color: rgba(0, 0, 0, 0.4);
+        font-weight: 300; }
   .summernote-upload-service-panel .preview-panel {
     position: absolute;
     left: 0px;
