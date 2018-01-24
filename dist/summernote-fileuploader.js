@@ -195,7 +195,7 @@ var Dom = function () {
     classCallCheck(this, Dom);
 
     this._tag = tag;
-    this._className = className;
+    this._className = className || '';
     this._attr = attr;
 
     this.initialize();
@@ -261,7 +261,9 @@ var Dom = function () {
   }, {
     key: 'removeClass',
     value: function removeClass(cls) {
-      this.el.className = Dom.trim((" " + this.el.className + " ").replace(' ' + cls + ' ', ' '));
+      if (this.el) {
+        this.el.className = Dom.trim((" " + this.el.className + " ").replace(' ' + cls + ' ', ' '));
+      }
     }
   }, {
     key: 'hasClass',
@@ -279,6 +281,15 @@ var Dom = function () {
       }
 
       return this;
+    }
+  }, {
+    key: 'toggleClass',
+    value: function toggleClass(cls) {
+      if (this.hasClass(cls)) {
+        this.removeClass(cls);
+      } else {
+        this.addClass(cls);
+      }
     }
   }, {
     key: 'find',
@@ -353,6 +364,15 @@ var Dom = function () {
       }
 
       return this;
+    }
+  }, {
+    key: 'parent',
+    value: function parent() {
+      if (this.el.parentNode) {
+        return new Dom(this.el.parentNode);
+      }
+
+      return null;
     }
   }, {
     key: 'remove',
@@ -942,18 +962,38 @@ var PreviewPanel = function () {
       this.render();
     }
   }, {
+    key: 'templateItem',
+    value: function templateItem(file, index) {
+
+      if (file.type.indexOf('image') > -1) {
+        var $img = new Dom('img');
+
+        $img.attr('src', URL.createObjectURL(file));
+
+        return $img;
+      } else {
+        var $file = new Dom('div', 'file');
+
+        $file.html(file.name);
+
+        return $file;
+      }
+    }
+  }, {
     key: 'renderViewItem',
     value: function renderViewItem(file, index) {
       var $el = new Dom('div', 'view-item', {
         'data-index': index,
         'data-name': file.name,
-        'data-type': file.type,
-        'data-file': file
+        'data-type': file.type
       });
 
       if (this.templateFunc) {
         var tpl = this.templateFunc(file, index);
         $el.html(tpl);
+      } else {
+        var _tpl = this.templateItem(file, index);
+        $el.html(_tpl);
       }
 
       if (this.itemClassFunc) {
@@ -980,11 +1020,24 @@ var PreviewPanel = function () {
       this.$el.html(arr);
     }
   }, {
+    key: 'itemClick',
+    value: function itemClick(e) {
+      var $target = new Dom(e.target);
+      $target.toggleClass('selected');
+    }
+  }, {
     key: 'initializeEvent',
-    value: function initializeEvent() {}
+    value: function initializeEvent() {
+      this.callbackItemClick = this.itemClick.bind(this);
+
+      this.$el.on('click', this.callbackItemClick);
+    }
   }, {
     key: 'destroy',
     value: function destroy() {
+
+      this.$el.off('click', this.callbackItemClick);
+
       this.$el.remove();
       this.$el = null;
     }
@@ -1220,6 +1273,7 @@ var DirectoryServicePanel = function () {
   return DirectoryServicePanel;
 }();
 
+// service 
 var FileUploader = function (_SummernotePlugin) {
   inherits(FileUploader, _SummernotePlugin);
 
