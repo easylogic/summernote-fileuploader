@@ -103,6 +103,10 @@ class PreviewPanel {
     return File.filetype(type)
   }  
 
+  getFileExt (name) {
+    return name.split('.').pop()
+  }    
+
   updateProgress (index, uploadedPercent) {
     const $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
 
@@ -114,9 +118,10 @@ class PreviewPanel {
   templateItem (file, index) {
 
     let image_url = 'about:blank';
+    let empty = ''; 
     let file_name = file.name;
-    let file_size = this.getFileSize(file.size); 
-    let file_type = this.getFileType(file.type); 
+    let file_size = this.getFileSize(file.size);  
+    let file_ext = this.getFileExt(file.name); 
 
     if (file.type.indexOf('image') > -1) {
       image_url = URL.createObjectURL(file)
@@ -124,14 +129,21 @@ class PreviewPanel {
 
     }
 
+    let preview_image = ``;
+    if (image_url == 'about:blank') {
+      empty = 'empty';
+      preview_image = `<div src="${image_url}" class='preview-image ${empty}' data-file-ext='${file_ext}' ></div> `      
+    } else {
+      preview_image = `<img src="${image_url}" class='preview-image' data-file-ext='${file_ext}' /> `
+    }
+
     const tpl = `
-      <img src="${image_url}" class='preview-image' />
+      ${preview_image}
       <div class="item-close">
         <span>&times;</span>
       </div>
       <div class="file-info" >
         <div class="file-name" title="${file_name}" >
-          <span class="file-type" >${file_type}</span>
           ${file_name}
         </div>
         <div class="file-size" >${file_size}</div>
@@ -144,10 +156,8 @@ class PreviewPanel {
   }
 
   refreshItemStatus (index, status) {
-
     let $currentViewItem = this.$el.find("[data-index='"+index+"']");
     $currentViewItem.addClass(status);
-
   }
 
   renderViewItem (index) {

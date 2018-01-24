@@ -2,7 +2,7 @@ $width: 740px;
 $height: 500px;
 $border-color: #ececec;
 $upload-border: 1px solid $border-color;
-$selected-color: rgba(63,198,247,0.9);
+$selected-color: rgba(63,198,247,0.7);
 $selected-border: 1px solid $selected-color;
 
 .summernote-fileuploader-back {
@@ -100,7 +100,7 @@ $selected-border: 1px solid $selected-color;
       button {
         margin-left: 10px;
         padding:5px 10px;
-        border-radius: 0px;        
+        border-radius: 3px;        
 
 
         &.cancel-button {

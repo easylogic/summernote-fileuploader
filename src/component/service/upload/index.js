@@ -60,6 +60,25 @@ class UploadServicePanel {
 
     this.$el.on('drop', this.$$drop);
     this.$el.on('dragover', this.$$dragover);    
+
+    this.initializeFileEvent();
+  }
+
+  initializeFileEvent () {
+
+    /* upload event method  */    
+    ['response', 'success', 'progress', 'fail', 'abort'].forEach((field) => {
+      this[field] = (index) => {
+        if (typeof this.options[field] === 'function') {
+          this.options[field](this.getFile(index), index);
+        }
+
+        if (typeof this.previewPanel[field] === 'function' ) {
+          this.previewPanel[field](index);
+        }
+
+      }
+    })
   }
 
   destroy () {
@@ -111,42 +130,6 @@ class UploadServicePanel {
   deleteFile (index) {
     this.fileManager.deleteFile(index)
   }  
-
-  /* upload event method  */
-  response (index) {
-    if (typeof this.options.success === 'function') {
-      this.options.response(this.getFile(index), index);
-    }
-    this.previewPanel.response(index);    
-  }
-
-  success (index) {
-    if (typeof this.options.success === 'function') {
-      this.options.success(this.getFile(index), index);
-    }
-    this.previewPanel.success(index);    
-  }
-
-  progress (index, loaded, total) {
-    if (typeof this.options.progress === 'function') {
-      this.options.progress(this.getFile(index), index, loaded, total);
-    }
-    this.previewPanel.progress(index, loaded, total);    
-  }
-
-  fail (index) {
-    if (typeof this.options.fail === 'function') {
-      this.options.fail(this.getFile(file), index);
-    }
-    this.previewPanel.fail(index);    
-  } 
-
-  abort (index) {
-    if (typeof this.options.abort === 'function') {
-      this.options.abort(this.getFile(index), index);
-    }
-    this.previewPanel.abort(index);
-  }
 
 }
 

@@ -34,7 +34,8 @@
                 box-sizing: border-box;
                 background-color: white;
                 color: rgba(0, 0, 0, 0.4);
-                font-weight: 300;
+                font-weight: normal;
+                font-size: 15px;
             }
         }
     }
@@ -106,8 +107,37 @@
 
             .preview-image {
                 max-width:100%;
-                height: 100px;
-                border:1px solid rgba(0, 0, 0, 0.3);
+                height: 90px;
+                position: relative;
+                border-radius: 10px;
+                display:inline-block;
+                vertical-align: middle;
+
+                &.empty {
+                    width: 84px;
+                    background-color: #dc4c40;
+
+                    &[data-file-ext='jar'] {
+                        background-color: yellow;
+                    }
+
+                    &:after {
+                        border-radius: 10px;
+                        position: absolute;
+                        top: 0px;
+                        content: attr(data-file-ext);
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        color: white;
+                        font-size: 30px;
+                        padding: 20px 0px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        box-sizing: border-box;
+                        text-shadow: 1px 3px 4px black;
+                    }
+                }
             }
 
             .file-info {

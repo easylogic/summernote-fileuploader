@@ -1100,6 +1100,11 @@ var PreviewPanel = function () {
       return File.filetype(type);
     }
   }, {
+    key: 'getFileExt',
+    value: function getFileExt(name) {
+      return name.split('.').pop();
+    }
+  }, {
     key: 'updateProgress',
     value: function updateProgress(index, uploadedPercent) {
       var $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
@@ -1113,22 +1118,30 @@ var PreviewPanel = function () {
     value: function templateItem(file, index) {
 
       var image_url = 'about:blank';
+      var empty = '';
       var file_name = file.name;
       var file_size = this.getFileSize(file.size);
-      var file_type = this.getFileType(file.type);
+      var file_ext = this.getFileExt(file.name);
 
       if (file.type.indexOf('image') > -1) {
         image_url = URL.createObjectURL(file);
       } else {}
 
-      var tpl = '\n      <img src="' + image_url + '" class=\'preview-image\' />\n      <div class="item-close">\n        <span>&times;</span>\n      </div>\n      <div class="file-info" >\n        <div class="file-name" title="' + file_name + '" >\n          <span class="file-type" >' + file_type + '</span>\n          ' + file_name + '\n        </div>\n        <div class="file-size" >' + file_size + '</div>\n      </div>\n      <div class="file-progress"><div class="file-progress-bar"></div></div>\n    ';
+      var preview_image = '';
+      if (image_url == 'about:blank') {
+        empty = 'empty';
+        preview_image = '<div src="' + image_url + '" class=\'preview-image ' + empty + '\' data-file-ext=\'' + file_ext + '\' ></div> ';
+      } else {
+        preview_image = '<img src="' + image_url + '" class=\'preview-image\' data-file-ext=\'' + file_ext + '\' /> ';
+      }
+
+      var tpl = '\n      ' + preview_image + '\n      <div class="item-close">\n        <span>&times;</span>\n      </div>\n      <div class="file-info" >\n        <div class="file-name" title="' + file_name + '" >\n          ' + file_name + '\n        </div>\n        <div class="file-size" >' + file_size + '</div>\n      </div>\n      <div class="file-progress"><div class="file-progress-bar"></div></div>\n    ';
 
       return tpl;
     }
   }, {
     key: 'refreshItemStatus',
     value: function refreshItemStatus(index, status) {
-
       var $currentViewItem = this.$el.find("[data-index='" + index + "']");
       $currentViewItem.addClass(status);
     }
@@ -1322,6 +1335,26 @@ var UploadServicePanel = function () {
 
       this.$el.on('drop', this.$$drop);
       this.$el.on('dragover', this.$$dragover);
+
+      this.initializeFileEvent();
+    }
+  }, {
+    key: 'initializeFileEvent',
+    value: function initializeFileEvent() {
+      var _this = this;
+
+      /* upload event method  */
+      ['response', 'success', 'progress', 'fail', 'abort'].forEach(function (field) {
+        _this[field] = function (index) {
+          if (typeof _this.options[field] === 'function') {
+            _this.options[field](_this.getFile(index), index);
+          }
+
+          if (typeof _this.previewPanel[field] === 'function') {
+            _this.previewPanel[field](index);
+          }
+        };
+      });
     }
   }, {
     key: 'destroy',
@@ -1378,49 +1411,6 @@ var UploadServicePanel = function () {
     key: 'deleteFile',
     value: function deleteFile(index) {
       this.fileManager.deleteFile(index);
-    }
-
-    /* upload event method  */
-
-  }, {
-    key: 'response',
-    value: function response(index) {
-      if (typeof this.options.success === 'function') {
-        this.options.response(this.getFile(index), index);
-      }
-      this.previewPanel.response(index);
-    }
-  }, {
-    key: 'success',
-    value: function success(index) {
-      if (typeof this.options.success === 'function') {
-        this.options.success(this.getFile(index), index);
-      }
-      this.previewPanel.success(index);
-    }
-  }, {
-    key: 'progress',
-    value: function progress(index, loaded, total) {
-      if (typeof this.options.progress === 'function') {
-        this.options.progress(this.getFile(index), index, loaded, total);
-      }
-      this.previewPanel.progress(index, loaded, total);
-    }
-  }, {
-    key: 'fail',
-    value: function fail(index) {
-      if (typeof this.options.fail === 'function') {
-        this.options.fail(this.getFile(file), index);
-      }
-      this.previewPanel.fail(index);
-    }
-  }, {
-    key: 'abort',
-    value: function abort(index) {
-      if (typeof this.options.abort === 'function') {
-        this.options.abort(this.getFile(index), index);
-      }
-      this.previewPanel.abort(index);
     }
   }]);
   return UploadServicePanel;
