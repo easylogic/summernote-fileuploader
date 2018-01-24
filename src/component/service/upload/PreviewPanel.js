@@ -138,10 +138,9 @@ class PreviewPanel {
     }
 
     const tpl = `
+    <div class="item-close"> <span>&times;</span> </div>    
       ${preview_image}
-      <div class="item-close">
-        <span>&times;</span>
-      </div>
+
       <div class="file-info" >
         <div class="file-name" title="${file_name}" >
           ${file_name}

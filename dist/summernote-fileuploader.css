@@ -76,8 +76,8 @@
           border: 1px solid #ececec;
           color: #ff0000; }
         .summernote-fileuploader-back .summernote-fileuploader > .footer button.select-button {
-          border: 1px solid rgba(63, 198, 247, 0.7);
-          background-color: rgba(63, 198, 247, 0.7);
+          border: 1px solid #3fc6f7;
+          background-color: #3fc6f7;
           color: #ffffff;
           font-weight: bold; }
 
@@ -122,37 +122,42 @@
     right: 0px;
     bottom: 50px;
     top: 0px;
-    overflow: auto; }
+    overflow: auto;
+    padding: 5px;
+    box-sizing: border-box; }
     .summernote-upload-service-panel .preview-panel > .view-item {
       display: inline-block;
       position: relative;
       vertical-align: middle;
       width: 120px;
+      height: 120px;
       box-sizing: border-box;
       padding: 2px;
-      margin: 10px;
+      margin: 5px 5px;
       margin-bottom: 0px;
+      margin-right: 0px;
       background-color: white;
       cursor: pointer;
       text-align: center; }
       .summernote-upload-service-panel .preview-panel > .view-item.selected {
-        background-color: rgba(63, 198, 247, 0.7); }
+        background-color: #3fc6f7; }
         .summernote-upload-service-panel .preview-panel > .view-item.selected .preview-image {
-          border: 1px solid rgba(63, 198, 247, 0.7); }
+          border: 1px solid #3fc6f7; }
       .summernote-upload-service-panel .preview-panel > .view-item.success .file-progress {
         opacity: 0; }
       .summernote-upload-service-panel .preview-panel > .view-item > * {
         pointer-events: none; }
       .summernote-upload-service-panel .preview-panel > .view-item .item-close {
         position: absolute;
-        right: 0px;
+        right: 2px;
         top: -2px;
         margin: 0px;
         padding: 0px;
         display: inline-block;
+        z-index: 100;
         pointer-events: all; }
         .summernote-upload-service-panel .preview-panel > .view-item .item-close span {
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgba(0, 0, 0, 0.2);
           font-size: 13px;
           line-height: 14px;
           display: inline-block;
@@ -162,16 +167,19 @@
           box-sizing: border-box;
           margin: 0px;
           padding: 0px;
-          color: #ffffff; }
+          color: #ffffff;
+          transition: all 0.3s linear; }
+          .summernote-upload-service-panel .preview-panel > .view-item .item-close span:hover {
+            background-color: rgba(0, 0, 0, 0.7); }
       .summernote-upload-service-panel .preview-panel > .view-item .preview-image {
-        max-width: 100%;
-        height: 90px;
+        width: 100%;
+        height: 100%;
         position: relative;
-        border-radius: 10px;
         display: inline-block;
-        vertical-align: middle; }
+        vertical-align: middle;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        box-sizing: border-box; }
         .summernote-upload-service-panel .preview-panel > .view-item .preview-image.empty {
-          width: 84px;
           background-color: #dc4c40; }
           .summernote-upload-service-panel .preview-panel > .view-item .preview-image.empty[data-file-ext='jar'] {
             background-color: yellow; }
@@ -184,36 +192,42 @@
             width: 100%;
             height: 100%;
             color: white;
-            font-size: 30px;
-            padding: 20px 0px;
+            font-size: 18px;
+            line-height: 1;
+            padding: 20px 3px;
             font-weight: bold;
             text-transform: uppercase;
             box-sizing: border-box;
-            text-shadow: 1px 3px 4px black; }
-      .summernote-upload-service-panel .preview-panel > .view-item .file-info .file-name {
-        width: 100%;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        font-size: 11px;
-        padding: 2px;
-        pointer-events: all;
-        text-align: left; }
-      .summernote-upload-service-panel .preview-panel > .view-item .file-info .file-size {
-        font-size: 13px;
-        text-align: right;
-        font-size: 11px; }
+            text-shadow: 1px 3px 4px black;
+            word-wrap: break-word; }
+        .summernote-upload-service-panel .preview-panel > .view-item .preview-image:not(.empty) + .file-info {
+          display: none; }
+      .summernote-upload-service-panel .preview-panel > .view-item .file-info {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        background-color: rgba(255, 255, 255, 0.5); }
+        .summernote-upload-service-panel .preview-panel > .view-item .file-info .file-name {
+          width: 100%;
+          font-size: 11px;
+          padding: 5px;
+          word-break: break-all; }
+        .summernote-upload-service-panel .preview-panel > .view-item .file-info .file-size {
+          font-size: 13px;
+          text-align: right;
+          font-size: 11px;
+          display: none; }
       .summernote-upload-service-panel .preview-panel > .view-item .file-progress {
         height: 4px;
         box-sizing: border-box;
         margin: 0px;
         padding: 0px;
-        border: 0.5px solid rgba(0, 0, 0, 0.3);
         transition: all 0.7s ease-out; }
         .summernote-upload-service-panel .preview-panel > .view-item .file-progress .file-progress-bar {
           width: 0%;
           height: 100%;
-          background-color: rgba(63, 198, 247, 0.7); }
+          background-color: #3fc6f7; }
 
 .summernote-directory-service-panel {
   position: absolute;

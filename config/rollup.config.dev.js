@@ -3,7 +3,6 @@ import scss from 'rollup-plugin-scss'
 import babel from 'rollup-plugin-babel';
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
-import resolve from 'rollup-plugin-node-resolve';
 
 
 // rollup.config.js
@@ -14,7 +13,6 @@ export default {
     format: 'umd'
   },
   plugins : [
-    resolve(),
     serve(),
     livereload({watch: 'dist'}),
     scss({output : 'dist/' + packageJSON.name + '.css'}),

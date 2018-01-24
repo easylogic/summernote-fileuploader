@@ -1135,7 +1135,7 @@ var PreviewPanel = function () {
         preview_image = '<img src="' + image_url + '" class=\'preview-image\' data-file-ext=\'' + file_ext + '\' /> ';
       }
 
-      var tpl = '\n      ' + preview_image + '\n      <div class="item-close">\n        <span>&times;</span>\n      </div>\n      <div class="file-info" >\n        <div class="file-name" title="' + file_name + '" >\n          ' + file_name + '\n        </div>\n        <div class="file-size" >' + file_size + '</div>\n      </div>\n      <div class="file-progress"><div class="file-progress-bar"></div></div>\n    ';
+      var tpl = '\n    <div class="item-close"> <span>&times;</span> </div>    \n      ' + preview_image + '\n\n      <div class="file-info" >\n        <div class="file-name" title="' + file_name + '" >\n          ' + file_name + '\n        </div>\n        <div class="file-size" >' + file_size + '</div>\n      </div>\n      <div class="file-progress"><div class="file-progress-bar"></div></div>\n    ';
 
       return tpl;
     }
