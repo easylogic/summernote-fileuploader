@@ -45,11 +45,12 @@ class UploadServicePanel {
   }
 
   drop (e) {
-    console.log('drop', e);
+    e.preventDefault()
+    this.addFile([...e.dataTransfer.files])
   }
 
   dragover (e) {
-    console.log('dragover', e);
+    e.preventDefault()
   }
 
   initializeEvent () {
@@ -57,15 +58,15 @@ class UploadServicePanel {
     this.$$drop = this.drop.bind(this);
     this.$$dragover = this.dragover.bind(this);
 
-    this.$el.addEventListener('drop', this.$$drop);
-    this.$el.addEventListener('dragover', this.$$dragover);    
+    this.$el.on('drop', this.$$drop);
+    this.$el.on('dragover', this.$$dragover);    
   }
 
   destroy () {
     super.destroy();
 
-    this.$el.removeEventListener('drop', this.$$drop);
-    this.$el.removeEventListener('dragover', this.$$dragover);    
+    this.$el.off('drop', this.$$drop);
+    this.$el.off('dragover', this.$$dragover);    
 
     this.uploadPanel.destroy();
     this.previewPanel.destroy();

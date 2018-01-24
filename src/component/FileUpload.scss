@@ -31,8 +31,7 @@ $selected-color: rgba(63,198,247,0.9);
       left:0px; 
       top:0px;
       width:120px;
-      bottom:0px;
-      border-bottom:$upload-border;
+      bottom:40px;
 
       > .tab-item {
         display:block;
@@ -40,8 +39,12 @@ $selected-color: rgba(63,198,247,0.9);
         text-decoration: none;      
         box-sizing:border-box;
         text-align:center;
-        border-bottom:1px solid #f7f7f7;
         cursor: pointer;
+        border-bottom:1px solid rgba(0, 0, 0, 0.05);
+
+        > * {
+          pointer-events: none;
+        }
 
         &.active {
           font-weight: bold;
