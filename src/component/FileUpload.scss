@@ -2,6 +2,7 @@ $width: 740px;
 $height: 500px;
 $border-color: #ececec;
 $upload-border: 1px solid $border-color;
+$selected-color: rgba(63,198,247,0.9);
 
 .summernote-fileuploader-back {
   position:fixed;
@@ -39,18 +40,20 @@ $upload-border: 1px solid $border-color;
         text-decoration: none;      
         box-sizing:border-box;
         text-align:center;
+        border-bottom:1px solid #f7f7f7;
+        cursor: pointer;
 
         &.active {
           font-weight: bold;
-          background-color: rgba(0, 0, 0, 0.2);
+          background-color: rgba(0, 0, 0, 0.1);
           color:#333;
 
         }
-      }
-    
-      > .tab-item.selected {
-        font-weight:bold;
-        color:blue;
+
+        &.selected {
+          font-weight:bold;
+          color: rgb(0, 0, 255);
+        }
       }
     }
 

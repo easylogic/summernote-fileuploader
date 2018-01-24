@@ -96,18 +96,38 @@ class PreviewPanel {
     this.render();
   }
 
+  templateItem (file, index) {
+
+    if (file.type.indexOf('image') > -1) {
+      let $img = new Dom('img');
+      
+      $img.attr('src', URL.createObjectURL(file));
+  
+      return $img; 
+    } else {
+      let $file = new Dom('div', 'file');
+    
+      $file.html(file.name)
+    
+      return $file; 
+    }
+
+  }
+
   renderViewItem (file, index) {
     let $el = new Dom('div', 'view-item', { 
       'data-index' : index, 
       'data-name' : file.name,
-      'data-type' : file.type,
-      'data-file' : file
+      'data-type' : file.type
     });
 
     if (this.templateFunc) {
       let tpl = this.templateFunc(file, index);
       $el.html(tpl);      
-    } 
+    } else {
+      let tpl = this.templateItem(file, index);
+      $el.html(tpl);
+    }
 
     if (this.itemClassFunc) {
       let className = this.itemClassFunc(file, index);
@@ -131,11 +151,21 @@ class PreviewPanel {
     this.$el.html(arr);
   }
 
-  initializeEvent() {
+  itemClick (e) {
+    const $target = new Dom(e.target);
+    $target.toggleClass('selected')
+  }
 
+  initializeEvent() {
+    this.callbackItemClick = this.itemClick.bind(this);
+
+    this.$el.on('click', this.callbackItemClick);
   }
 
   destroy() {
+
+    this.$el.off('click', this.callbackItemClick);
+
     this.$el.remove();        
     this.$el = null;
   }

@@ -5,7 +5,7 @@ class Dom {
 
   constructor (tag, className, attr) {
     this._tag = tag;
-    this._className = className;
+    this._className = className || '';
     this._attr = attr; 
 
     this.initialize();
@@ -72,7 +72,10 @@ class Dom {
   }
 
   removeClass (cls) {
-    this.el.className = Dom.trim((" " + this.el.className + " ").replace(' ' + cls + ' ', ' '));
+    if (this.el) {
+      this.el.className = Dom.trim((" " + this.el.className + " ").replace(' ' + cls + ' ', ' '));
+    }
+
   }
   
   hasClass (cls) {
@@ -88,6 +91,14 @@ class Dom {
     }
 
     return this;  
+  }
+
+  toggleClass(cls) {
+    if (this.hasClass(cls)) {
+      this.removeClass(cls)
+    } else {
+      this.addClass(cls);
+    }
   }
 
   find (selector) {
@@ -154,6 +165,14 @@ class Dom {
     }
 
     return this;
+  }
+
+  parent () {
+    if (this.el.parentNode) {
+      return new Dom(this.el.parentNode)
+    }
+
+    return null;
   }
 
   remove () {
