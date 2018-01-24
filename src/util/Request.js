@@ -8,6 +8,25 @@ class Request {
 
   send () {
     var req = new XMLHttpRequest();    
+
+    req.withCredentials = this.options.withCredentials || false;
+
+    req.onreadystatechange =  () => {
+      try {
+        if (req.readyState === 4) {
+          if (req.status === 200) {
+            this.options.response({ success : true, req })
+          } else {
+            this.options.response({ success : false  })
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+    }
+    
+
     if (this.options.success) {    
       req.upload.addEventListener('load', this.options.success);
     }
@@ -24,7 +43,7 @@ class Request {
       req.upload.addEventListener("abort", this.options.abort);
     }    
 
-    req.open( this.options.method || "POST", url);
+    req.open( this.options.method || "POST", this.options.url, this.options.isAsync || true);
 
     if (this.options.responseType) {
       req.responseType = this.options.responseType;
@@ -35,6 +54,8 @@ class Request {
         req.setRequestHeader(key, this.options.headers[key]);
       }
     }    
+
+    req.setRequestHeader('Content-Type', 'text/html');
 
     if (this.options.method.toUpperCase() == 'GET') {
       req.send(null);

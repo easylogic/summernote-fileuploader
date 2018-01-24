@@ -23,7 +23,7 @@
       left: 0px;
       top: 0px;
       width: 120px;
-      bottom: 40px; }
+      bottom: 50px; }
       .summernote-fileuploader-back .summernote-fileuploader > .tabs > .tab-item {
         display: block;
         padding: 10px 10px;
@@ -46,7 +46,7 @@
       left: 120px;
       right: 0px;
       top: 0px;
-      bottom: 40px;
+      bottom: 50px;
       box-sizing: border-box;
       border-left: 1px solid #ececec; }
       .summernote-fileuploader-back .summernote-fileuploader > .tab-contents > .tab-contents-item {
@@ -62,16 +62,24 @@
       position: absolute;
       left: 0px;
       right: 0px;
-      height: 40px;
+      height: 50px;
       bottom: 0px;
       text-align: right;
       box-sizing: border-box;
-      padding: 5px 10px;
+      padding: 10px;
       border-top: 1px solid #ececec; }
-      .summernote-fileuploader-back .summernote-fileuploader > .footer .select-button {
-        padding: 3px 10px;
-        border-radius: 0px;
-        border: 1px solid #ececec; }
+      .summernote-fileuploader-back .summernote-fileuploader > .footer button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        border-radius: 0px; }
+        .summernote-fileuploader-back .summernote-fileuploader > .footer button.cancel-button {
+          border: 1px solid #ececec;
+          color: #ff0000; }
+        .summernote-fileuploader-back .summernote-fileuploader > .footer button.select-button {
+          border: 1px solid rgba(63, 198, 247, 0.9);
+          background-color: rgba(63, 198, 247, 0.9);
+          color: #ffffff;
+          font-weight: bold; }
 
 .summernote-upload-service-panel {
   position: absolute;
@@ -118,20 +126,70 @@
       display: inline-block;
       position: relative;
       vertical-align: middle;
-      width: 100px;
-      height: 100px;
+      width: 120px;
       box-sizing: border-box;
       padding: 2px;
       margin: 10px;
-      background-color: #acacac;
-      cursor: pointer; }
+      margin-bottom: 0px;
+      background-color: white;
+      cursor: pointer;
+      text-align: center; }
       .summernote-upload-service-panel .preview-panel > .view-item.selected {
         background-color: rgba(63, 198, 247, 0.9); }
+        .summernote-upload-service-panel .preview-panel > .view-item.selected .preview-image {
+          border: 1px solid rgba(63, 198, 247, 0.9); }
+      .summernote-upload-service-panel .preview-panel > .view-item.success .file-progress {
+        opacity: 0; }
       .summernote-upload-service-panel .preview-panel > .view-item > * {
         pointer-events: none; }
-      .summernote-upload-service-panel .preview-panel > .view-item img {
+      .summernote-upload-service-panel .preview-panel > .view-item .item-close {
+        position: absolute;
+        right: 0px;
+        top: -2px;
+        margin: 0px;
+        padding: 0px;
+        display: inline-block;
+        pointer-events: all; }
+        .summernote-upload-service-panel .preview-panel > .view-item .item-close span {
+          background-color: rgba(0, 0, 0, 0.5);
+          font-size: 13px;
+          line-height: 14px;
+          display: inline-block;
+          width: 16px;
+          height: 17px;
+          text-align: center;
+          box-sizing: border-box;
+          margin: 0px;
+          padding: 0px;
+          color: #ffffff; }
+      .summernote-upload-service-panel .preview-panel > .view-item .preview-image {
+        max-width: 100%;
+        height: 100px;
+        border: 1px solid rgba(0, 0, 0, 0.3); }
+      .summernote-upload-service-panel .preview-panel > .view-item .file-info .file-name {
         width: 100%;
-        height: 100%; }
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 11px;
+        padding: 2px;
+        pointer-events: all;
+        text-align: left; }
+      .summernote-upload-service-panel .preview-panel > .view-item .file-info .file-size {
+        font-size: 13px;
+        text-align: right;
+        font-size: 11px; }
+      .summernote-upload-service-panel .preview-panel > .view-item .file-progress {
+        height: 4px;
+        box-sizing: border-box;
+        margin: 0px;
+        padding: 0px;
+        border: 0.5px solid rgba(0, 0, 0, 0.3);
+        transition: all 0.7s ease-out; }
+        .summernote-upload-service-panel .preview-panel > .view-item .file-progress .file-progress-bar {
+          width: 0%;
+          height: 100%;
+          background-color: rgba(63, 198, 247, 0.9); }
 
 .summernote-directory-service-panel {
   position: absolute;

@@ -7,7 +7,7 @@ class FileManager {
     this.options = this.service.getOptions(); 
 
     this.defaultFileName = 'summernote-file';
-    this.reponseTypeFunc = this.parseResponseType(this.options.responseType);
+    this.responseTypeFunc = this.parseResponseType(this.options.responseType);
     this.nameFunc = this.parseName(this.options.name);
     this.urlFunc = this.parseUrl(this.options.url);
     this.methodFunc = this.parseMethod(this.options.method);
@@ -42,7 +42,6 @@ class FileManager {
   }
 
   parseName (name) {
-    if (!name) return (file, index) => {} ;    
     if (typeof name === 'function') {
       return (file, i) => {
         return name(file, i);
@@ -50,7 +49,7 @@ class FileManager {
     } 
 
     return (file, i) => {
-      return name || this.defaultFileName;
+      return file.name || name || this.defaultFileName;
     };
     
   }
@@ -106,64 +105,86 @@ class FileManager {
 
   parseUrl (url) {
 
-    if (typeof url === 'string') {
-      return (file, i) => {
-        return this.parseSimpleUrl(url);
-      };
-    } else if (typeof url === 'object') {
-      return (file, i) => {
-        return url;
-      };
-    } else if (typeof url === 'function') {
+    if (typeof url === 'function') {
       return (file, i) => {
         return url(file, i)
       };
+    } else {
+      return (file, index ) => {
+        return url; 
+      }
     }
-
-    return url; 
   }
 
   combine (file, index, callback) {
-    const method = this.methodFunc(file, index);    
-    const responseType = this.responseTypeFunc(file, index);        
-    const url = this.urlFunc(file, index);
-    const name = this.nameFunc(file, index);
-    const params = this.paramsFunc(file, index);
-    const headers = this.headersFunc(file, index);
+    const method        = this.methodFunc(file, index);    
+    const responseType  = this.responseTypeFunc(file, index);        
+    const url           = this.urlFunc(file, index);
+    const name          = this.nameFunc(file, index);
+    const params        = this.paramsFunc(file, index);
+    const headers       = this.headersFunc(file, index);
+    const isAsync       = this.options.isAsync || true; 
+    const withCredentials   = this.options.withCredentials || false; 
 
-    callback(method, name, url, params, headers, responseType);
+    if ( !file.response ) { // 응답 받은 게 없으면 다시 보낸다. 
+      callback({ 
+        file, 
+        index, 
+        method, 
+        name, 
+        url, 
+        params, 
+        headers, 
+        responseType, 
+        isAsync, 
+        withCredentials 
+      });
+    } else {
+      //upload 하지 않음 . 
+    }
+    
   }
 
   uploadToServer (file, index) {
 
-    this.combine(file, index, (method, name, url, params, headers, responseType) => {
+    this.combine(file, index, ({ 
+      file, 
+      index, 
+      method, 
+      name, 
+      url, 
+      params, 
+      headers, 
+      responseType, 
+      isAsync, 
+      withCredentials 
+    }) => {
 
       let formData = new FormData();
-      formData.append(name + "-index", index);
       formData.append(name, file);
   
       new Request({
-        method: method, 
-        url : url,
-        params : params, 
-        formData : formData,
-        headers: headers, 
-        responseType: responseType, 
+        method, url, params, formData, headers, responseType, isAsync, withCredentials,
+
+        response: (obj) => {
+          file.response = obj;
+          this.service.response(index);
+        },
         success : (res) => {
-          this.service.success(file, index);
+          file.success = true; 
+          this.service.success(index);
         },
         progress : (e) => {
-          this.service.progress(file, index, e.loaded, e.total);
+          file.progress = { loaded : e.loaded, total : e.total }
+          this.service.progress(index, e.loaded, e.total);
         },
         fail : (e) => {
-          this.service.fail(file, index);
+          file.fail = true; 
+          this.service.fail(index);
         }
       }).send();
   
     })
-
-
-
   }
 
   removeFile (index) {
@@ -172,6 +193,26 @@ class FileManager {
 
   getFiles () {
     return this.files; 
+  }
+
+  getFile (index) {
+    return this.files[index];
+  }
+
+  length () {
+    return this.files.length; 
+  }
+
+  selectFile (index, isSelected) {
+    if (this.files[index]) {
+      this.files[index].selected = isSelected; 
+    }
+  }  
+
+  deleteFile (index) {
+    this.removeFile(index);
+
+    // TODO:  remove uploaded file 
   }
 
   addFile (file) {  

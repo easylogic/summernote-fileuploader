@@ -87,35 +87,65 @@ class UploadServicePanel {
 
     this.fileManager.addFiles(files);
     this.previewPanel.refresh();
+
+    // 파일 업로드 바로 실행하기 
+    this.fileManager.uploadAllFiles();
   }
 
+  length () {
+    return this.fileManager.length();
+  }
+    
   getFiles () {
     return this.fileManager.getFiles(); 
   }
 
+  getFile (index) {
+    return this.fileManager.getFile(index);
+  }
+
+  selectFile (index, isSelected) {
+    this.fileManager.selectFile(index, isSelected)
+  }
+
+  deleteFile (index) {
+    this.fileManager.deleteFile(index)
+  }  
+
   /* upload event method  */
-  success (file, index) {
+  response (index) {
     if (typeof this.options.success === 'function') {
-      this.options.success(file, index);
+      this.options.response(this.getFile(index), index);
     }
+    this.previewPanel.response(index);    
   }
 
-  progress (file, index, loaded, total) {
+  success (index) {
+    if (typeof this.options.success === 'function') {
+      this.options.success(this.getFile(index), index);
+    }
+    this.previewPanel.success(index);    
+  }
+
+  progress (index, loaded, total) {
     if (typeof this.options.progress === 'function') {
-      this.options.progress(file, index, loaded, total);
+      this.options.progress(this.getFile(index), index, loaded, total);
     }
+    this.previewPanel.progress(index, loaded, total);    
   }
 
-  fail (file, index) {
+  fail (index) {
     if (typeof this.options.fail === 'function') {
-      this.options.fail(file, index);
+      this.options.fail(this.getFile(file), index);
     }
+    this.previewPanel.fail(index);    
   } 
 
-  abort (file, index) {
+  abort (index) {
     if (typeof this.options.abort === 'function') {
-      this.options.abort(file, index);
+      this.options.abort(this.getFile(index), index);
     }
+    this.previewPanel.abort(index);
   }
 
 }

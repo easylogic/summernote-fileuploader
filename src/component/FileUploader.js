@@ -23,7 +23,7 @@ class FileUploader extends SummernotePlugin {
       contents: 'Uploader',
       tooltip: 'File Uploader',
       click: () => {
-        this.$back.show();
+        this.show();
       }
     });
 
@@ -78,6 +78,10 @@ class FileUploader extends SummernotePlugin {
     this.getActiveService().select();
   }
 
+  clickCancelButton (e) {
+    this.hide()
+  }
+
   clickTab (e) {
     let $target = new Dom(e.target);
 
@@ -101,9 +105,11 @@ class FileUploader extends SummernotePlugin {
   }
 
   initializeEvent() {
+    this.$$cancelFunc = this.clickCancelButton.bind(this);
     this.$$selectFunc = this.clickSelectButton.bind(this);
 
-    this.$select.on('click', this.$$selectFunc);
+    this.$cancel.on('click', this.$$cancelFunc);
+    this.$select.on('click', this.$$selectFunc);    
 
     this.$$clickTab = this.clickTab.bind(this);
     this.$tab.on('click', this.$$clickTab);
@@ -125,6 +131,18 @@ class FileUploader extends SummernotePlugin {
     this.$back.append(this.$el);
 
     this.$back.appendTo('body');    
+  }
+
+  show () {
+    this.$back.show();
+  }
+
+  hide () {
+    this.$back.hide();
+  }
+
+  toggle () {
+    this.$back.toggle();
   }
 
   render () {
@@ -190,14 +208,18 @@ class FileUploader extends SummernotePlugin {
   renderFooter() {
     this.$footer.empty();
 
+    this.$cancel = new Dom('button', 'cancel-button').html("Close");
     this.$select = new Dom('button', 'select-button').html("Select");
+
+    this.$footer.append(this.$cancel);
     this.$footer.append(this.$select);
   }
 
   destroy () {
     super.destroy();
 
-    this.$select.off('click', this.$$selectFunc);
+    this.$cancel.off('click', this.$$cancelFunc);
+    this.$select.off('click', this.$$selectFunc);    
 
     for(let key in this.services) {
       if (this.services[key]) {

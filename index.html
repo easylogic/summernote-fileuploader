@@ -28,7 +28,9 @@ $(document).ready(function() {
     fileuploader : {
       zIndex: 100,
       upload : {
-        accept: 'image/*'
+        accept: '*/*',
+        responseType: 'json',
+        url : 'http://localhost:3000/upload'
       }
     }
   });

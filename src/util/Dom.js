@@ -142,6 +142,26 @@ class Dom {
     return this.html('');
   }
 
+  after (el) {
+    if (typeof el == 'string') {
+      this.el.parentNode.insertBefore(document.createTextNode(el), this.el.nextSibling);
+    } else {
+      this.el.parentNode.insertBefore(el.el || el, this.el.nextSibling);
+    }
+
+    return this;
+  }
+
+  before () {
+    if (typeof el == 'string') {
+      this.el.parentNode.insertBefore(document.createTextNode(el), this.el);
+    } else {
+      this.el.parentNode.insertBefore(el.el || el, this.el);
+    }
+
+    return this;
+  }
+
   append (el) {
     if (typeof el == 'string') {
         this.el.appendChild(document.createTextNode(el));

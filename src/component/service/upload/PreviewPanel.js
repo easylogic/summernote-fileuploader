@@ -1,4 +1,5 @@
 import Dom from '../../../util/Dom'
+import File from '../../../util/File'
 
 class PreviewPanel {
   constructor(service, context /* summernote context */) {
@@ -13,8 +14,6 @@ class PreviewPanel {
 
     this.initialize();
   }
-
-
 
   isFunction (it) {
     return typeof it === 'function';
@@ -96,30 +95,82 @@ class PreviewPanel {
     this.render();
   }
 
+  getFileSize (size, fixed = 0) {
+    return File.filesize(size, fixed)
+  }
+
+  getFileType (type) {
+    return File.filetype(type)
+  }  
+
+  updateProgress (index, uploadedPercent) {
+    const $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
+
+    if ($progressbar) {
+      $progressbar.css('width', uploadedPercent + '%');
+    }
+  }
+
   templateItem (file, index) {
 
+    let image_url = 'about:blank';
+    let file_name = file.name;
+    let file_size = this.getFileSize(file.size); 
+    let file_type = this.getFileType(file.type); 
+
     if (file.type.indexOf('image') > -1) {
-      let $img = new Dom('img');
-      
-      $img.attr('src', URL.createObjectURL(file));
-  
-      return $img; 
-    } else {
-      let $file = new Dom('div', 'file');
-    
-      $file.html(file.name)
-    
-      return $file; 
+      image_url = URL.createObjectURL(file)
+    } else { 
+
     }
+
+    const tpl = `
+      <img src="${image_url}" class='preview-image' />
+      <div class="item-close">
+        <span>&times;</span>
+      </div>
+      <div class="file-info" >
+        <div class="file-name" title="${file_name}" >
+          <span class="file-type" >${file_type}</span>
+          ${file_name}
+        </div>
+        <div class="file-size" >${file_size}</div>
+      </div>
+      <div class="file-progress"><div class="file-progress-bar"></div></div>
+    `
+
+    return tpl
 
   }
 
-  renderViewItem (file, index) {
+  refreshItemStatus (index, status) {
+
+    let $currentViewItem = this.$el.find("[data-index='"+index+"']");
+    $currentViewItem.addClass(status);
+
+  }
+
+  renderViewItem (index) {
+    const file = this.service.getFile(index);
+
     let $el = new Dom('div', 'view-item', { 
       'data-index' : index, 
       'data-name' : file.name,
-      'data-type' : file.type
+      'data-type' : file.type,
+      'data-size': file.size 
     });
+
+    if (file.selected) {
+      $el.addClass('selected')
+    }
+
+    if (file.success) {
+      $el.addClass('success');
+    }
+
+    if (file.fail) {
+      $el.addClass('fail');
+    }
 
     if (this.templateFunc) {
       let tpl = this.templateFunc(file, index);
@@ -144,16 +195,36 @@ class PreviewPanel {
 
   render () {
 
-    var arr = this.service.getFiles().map((file, index) => {
-        return this.renderViewItem(file, index);
-    })
+    var length = this.service.length();
+    var arr = [];
+
+    for(var index = 0; index < length; index++) {
+      arr[index] =  this.renderViewItem(index);
+    }
 
     this.$el.html(arr);
   }
 
   itemClick (e) {
     const $target = new Dom(e.target);
-    $target.toggleClass('selected')
+
+    const $itemClose = $target.closest('item-close');
+    if ($itemClose) {
+      const $viewItem = $target.closest('view-item');
+
+      if ($viewItem) {
+        this.service.deleteFile($viewItem.attr('data-index'));
+        $viewItem.remove();
+      }
+
+    } else {
+      const $viewItem = $target.closest('view-item');      
+      if ($viewItem) {
+        $viewItem.toggleClass('selected')
+        this.service.selectFile($viewItem.attr('data-index'), $viewItem.hasClass('selected'));
+      }
+    }
+
   }
 
   initializeEvent() {
@@ -168,6 +239,27 @@ class PreviewPanel {
 
     this.$el.remove();        
     this.$el = null;
+  }
+
+
+  /* upload event method  */
+  response (index) {
+    // NOOP 
+  }  
+  success (index) {
+    this.refreshItemStatus(index, 'success')
+  }
+
+  progress (index, loaded, total) {
+    this.updateProgress(index, (loaded/total) * 100);
+  }
+
+  fail (index) {
+    this.refreshItemStatus(index, 'fail')
+  } 
+
+  abort (index) {
+
   }
 }
 

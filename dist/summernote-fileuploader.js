@@ -339,6 +339,28 @@ var Dom = function () {
       return this.html('');
     }
   }, {
+    key: 'after',
+    value: function after(el) {
+      if (typeof el == 'string') {
+        this.el.parentNode.insertBefore(document.createTextNode(el), this.el.nextSibling);
+      } else {
+        this.el.parentNode.insertBefore(el.el || el, this.el.nextSibling);
+      }
+
+      return this;
+    }
+  }, {
+    key: 'before',
+    value: function before() {
+      if (typeof el == 'string') {
+        this.el.parentNode.insertBefore(document.createTextNode(el), this.el);
+      } else {
+        this.el.parentNode.insertBefore(el.el || el, this.el);
+      }
+
+      return this;
+    }
+  }, {
     key: 'append',
     value: function append(el) {
       if (typeof el == 'string') {
@@ -524,7 +546,26 @@ var Request = function () {
   createClass(Request, [{
     key: 'send',
     value: function send() {
+      var _this = this;
+
       var req = new XMLHttpRequest();
+
+      req.withCredentials = this.options.withCredentials || false;
+
+      req.onreadystatechange = function () {
+        try {
+          if (req.readyState === 4) {
+            if (req.status === 200) {
+              _this.options.response({ success: true, req: req });
+            } else {
+              _this.options.response({ success: false });
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
       if (this.options.success) {
         req.upload.addEventListener('load', this.options.success);
       }
@@ -541,7 +582,7 @@ var Request = function () {
         req.upload.addEventListener("abort", this.options.abort);
       }
 
-      req.open(this.options.method || "POST", url);
+      req.open(this.options.method || "POST", this.options.url, this.options.isAsync || true);
 
       if (this.options.responseType) {
         req.responseType = this.options.responseType;
@@ -552,6 +593,8 @@ var Request = function () {
           req.setRequestHeader(key, this.options.headers[key]);
         }
       }
+
+      req.setRequestHeader('Content-Type', 'text/html');
 
       if (this.options.method.toUpperCase() == 'GET') {
         req.send(null);
@@ -574,7 +617,7 @@ var FileManager = function () {
     this.options = this.service.getOptions();
 
     this.defaultFileName = 'summernote-file';
-    this.reponseTypeFunc = this.parseResponseType(this.options.responseType);
+    this.responseTypeFunc = this.parseResponseType(this.options.responseType);
     this.nameFunc = this.parseName(this.options.name);
     this.urlFunc = this.parseUrl(this.options.url);
     this.methodFunc = this.parseMethod(this.options.method);
@@ -614,7 +657,6 @@ var FileManager = function () {
     value: function parseName(name) {
       var _this = this;
 
-      if (!name) return function (file, index) {};
       if (typeof name === 'function') {
         return function (file, i) {
           return name(file, i);
@@ -622,7 +664,7 @@ var FileManager = function () {
       }
 
       return function (file, i) {
-        return name || _this.defaultFileName;
+        return file.name || name || _this.defaultFileName;
       };
     }
   }, {
@@ -679,23 +721,16 @@ var FileManager = function () {
   }, {
     key: 'parseUrl',
     value: function parseUrl(url) {
-      var _this2 = this;
 
-      if (typeof url === 'string') {
-        return function (file, i) {
-          return _this2.parseSimpleUrl(url);
-        };
-      } else if ((typeof url === 'undefined' ? 'undefined' : _typeof(url)) === 'object') {
-        return function (file, i) {
-          return url;
-        };
-      } else if (typeof url === 'function') {
+      if (typeof url === 'function') {
         return function (file, i) {
           return url(file, i);
         };
+      } else {
+        return function (file, index) {
+          return url;
+        };
       }
-
-      return url;
     }
   }, {
     key: 'combine',
@@ -706,35 +741,66 @@ var FileManager = function () {
       var name = this.nameFunc(file, index);
       var params = this.paramsFunc(file, index);
       var headers = this.headersFunc(file, index);
+      var isAsync = this.options.isAsync || true;
+      var withCredentials = this.options.withCredentials || false;
 
-      callback(method, name, url, params, headers, responseType);
+      if (!file.response) {
+        // 응답 받은 게 없으면 다시 보낸다. 
+        callback({
+          file: file,
+          index: index,
+          method: method,
+          name: name,
+          url: url,
+          params: params,
+          headers: headers,
+          responseType: responseType,
+          isAsync: isAsync,
+          withCredentials: withCredentials
+        });
+      } else {
+        //upload 하지 않음 . 
+      }
     }
   }, {
     key: 'uploadToServer',
     value: function uploadToServer(file, index) {
-      var _this3 = this;
+      var _this2 = this;
 
-      this.combine(file, index, function (method, name, url, params, headers, responseType) {
+      this.combine(file, index, function (_ref) {
+        var file = _ref.file,
+            index = _ref.index,
+            method = _ref.method,
+            name = _ref.name,
+            url = _ref.url,
+            params = _ref.params,
+            headers = _ref.headers,
+            responseType = _ref.responseType,
+            isAsync = _ref.isAsync,
+            withCredentials = _ref.withCredentials;
+
 
         var formData = new FormData();
-        formData.append(name + "-index", index);
         formData.append(name, file);
 
         new Request({
-          method: method,
-          url: url,
-          params: params,
-          formData: formData,
-          headers: headers,
-          responseType: responseType,
+          method: method, url: url, params: params, formData: formData, headers: headers, responseType: responseType, isAsync: isAsync, withCredentials: withCredentials,
+
+          response: function response(obj) {
+            file.response = obj;
+            _this2.service.response(index);
+          },
           success: function success(res) {
-            _this3.service.success(file, index);
+            file.success = true;
+            _this2.service.success(index);
           },
           progress: function progress(e) {
-            _this3.service.progress(file, index, e.loaded, e.total);
+            file.progress = { loaded: e.loaded, total: e.total };
+            _this2.service.progress(index, e.loaded, e.total);
           },
           fail: function fail(e) {
-            _this3.service.fail(file, index);
+            file.fail = true;
+            _this2.service.fail(index);
           }
         }).send();
       });
@@ -750,6 +816,30 @@ var FileManager = function () {
       return this.files;
     }
   }, {
+    key: 'getFile',
+    value: function getFile(index) {
+      return this.files[index];
+    }
+  }, {
+    key: 'length',
+    value: function length() {
+      return this.files.length;
+    }
+  }, {
+    key: 'selectFile',
+    value: function selectFile(index, isSelected) {
+      if (this.files[index]) {
+        this.files[index].selected = isSelected;
+      }
+    }
+  }, {
+    key: 'deleteFile',
+    value: function deleteFile(index) {
+      this.removeFile(index);
+
+      // TODO:  remove uploaded file 
+    }
+  }, {
     key: 'addFile',
     value: function addFile(file) {
       this.files.push(file);
@@ -757,14 +847,14 @@ var FileManager = function () {
   }, {
     key: 'addFiles',
     value: function addFiles(files) {
-      var _this4 = this;
+      var _this3 = this;
 
       if (!Array.isArray(files)) {
         files = [files];
       }
 
       files.forEach(function (file) {
-        _this4.addFile(file);
+        _this3.addFile(file);
       });
     }
   }, {
@@ -781,12 +871,12 @@ var FileManager = function () {
   }, {
     key: 'uploadAllFiles',
     value: function uploadAllFiles(files) {
-      var _this5 = this;
+      var _this4 = this;
 
       var uploadFiles = files || this.files || [];
 
       uploadFiles.forEach(function (file, index) {
-        _this5.uploadFile(file, index);
+        _this4.uploadFile(file, index);
       });
     }
   }]);
@@ -858,6 +948,42 @@ var UploadPanel = function () {
   }]);
   return UploadPanel;
 }();
+
+var KBYTE = 1024;
+var MBYTE = 1024 * 1024;
+var GBYTE = 1024 * 1024 * 1024;
+
+var File = {
+    round: function round(num, fixed) {
+        var fixedNumber = Math.pow(10, fixed);
+        return Math.floor(num * fixedNumber) / fixedNumber;
+    },
+    filesize: function filesize(size) {
+        var fixed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+        if (size >= GBYTE) {
+            return this.round(size / GBYTE, fixed) + " GB";
+        } else if (size >= MBYTE) {
+            return this.round(size / MBYTE, fixed) + " MB";
+        } else if (size >= KBYTE) {
+            return this.round(size / KBYTE, fixed) + " KB";
+        } else {
+            return size + " B";
+        }
+    },
+    filetype: function filetype(type) {
+        if (type.includes('image')) {
+            return 'I';
+        } else if (type.includes('text')) {
+            return 'T';
+        } else if (type.includes('application')) {
+            return 'A';
+        }
+
+        return "E";
+    }
+};
 
 var PreviewPanel = function () {
   function PreviewPanel(service, context /* summernote context */) {
@@ -962,31 +1088,73 @@ var PreviewPanel = function () {
       this.render();
     }
   }, {
-    key: 'templateItem',
-    value: function templateItem(file, index) {
+    key: 'getFileSize',
+    value: function getFileSize(size) {
+      var fixed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-      if (file.type.indexOf('image') > -1) {
-        var $img = new Dom('img');
+      return File.filesize(size, fixed);
+    }
+  }, {
+    key: 'getFileType',
+    value: function getFileType(type) {
+      return File.filetype(type);
+    }
+  }, {
+    key: 'updateProgress',
+    value: function updateProgress(index, uploadedPercent) {
+      var $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
 
-        $img.attr('src', URL.createObjectURL(file));
-
-        return $img;
-      } else {
-        var $file = new Dom('div', 'file');
-
-        $file.html(file.name);
-
-        return $file;
+      if ($progressbar) {
+        $progressbar.css('width', uploadedPercent + '%');
       }
     }
   }, {
+    key: 'templateItem',
+    value: function templateItem(file, index) {
+
+      var image_url = 'about:blank';
+      var file_name = file.name;
+      var file_size = this.getFileSize(file.size);
+      var file_type = this.getFileType(file.type);
+
+      if (file.type.indexOf('image') > -1) {
+        image_url = URL.createObjectURL(file);
+      } else {}
+
+      var tpl = '\n      <img src="' + image_url + '" class=\'preview-image\' />\n      <div class="item-close">\n        <span>&times;</span>\n      </div>\n      <div class="file-info" >\n        <div class="file-name" title="' + file_name + '" >\n          <span class="file-type" >' + file_type + '</span>\n          ' + file_name + '\n        </div>\n        <div class="file-size" >' + file_size + '</div>\n      </div>\n      <div class="file-progress"><div class="file-progress-bar"></div></div>\n    ';
+
+      return tpl;
+    }
+  }, {
+    key: 'refreshItemStatus',
+    value: function refreshItemStatus(index, status) {
+
+      var $currentViewItem = this.$el.find("[data-index='" + index + "']");
+      $currentViewItem.addClass(status);
+    }
+  }, {
     key: 'renderViewItem',
-    value: function renderViewItem(file, index) {
+    value: function renderViewItem(index) {
+      var file = this.service.getFile(index);
+
       var $el = new Dom('div', 'view-item', {
         'data-index': index,
         'data-name': file.name,
-        'data-type': file.type
+        'data-type': file.type,
+        'data-size': file.size
       });
+
+      if (file.selected) {
+        $el.addClass('selected');
+      }
+
+      if (file.success) {
+        $el.addClass('success');
+      }
+
+      if (file.fail) {
+        $el.addClass('fail');
+      }
 
       if (this.templateFunc) {
         var tpl = this.templateFunc(file, index);
@@ -1011,11 +1179,13 @@ var PreviewPanel = function () {
   }, {
     key: 'render',
     value: function render() {
-      var _this = this;
 
-      var arr = this.service.getFiles().map(function (file, index) {
-        return _this.renderViewItem(file, index);
-      });
+      var length = this.service.length();
+      var arr = [];
+
+      for (var index = 0; index < length; index++) {
+        arr[index] = this.renderViewItem(index);
+      }
 
       this.$el.html(arr);
     }
@@ -1023,7 +1193,22 @@ var PreviewPanel = function () {
     key: 'itemClick',
     value: function itemClick(e) {
       var $target = new Dom(e.target);
-      $target.toggleClass('selected');
+
+      var $itemClose = $target.closest('item-close');
+      if ($itemClose) {
+        var $viewItem = $target.closest('view-item');
+
+        if ($viewItem) {
+          this.service.deleteFile($viewItem.attr('data-index'));
+          $viewItem.remove();
+        }
+      } else {
+        var _$viewItem = $target.closest('view-item');
+        if (_$viewItem) {
+          _$viewItem.toggleClass('selected');
+          this.service.selectFile(_$viewItem.attr('data-index'), _$viewItem.hasClass('selected'));
+        }
+      }
     }
   }, {
     key: 'initializeEvent',
@@ -1041,6 +1226,32 @@ var PreviewPanel = function () {
       this.$el.remove();
       this.$el = null;
     }
+
+    /* upload event method  */
+
+  }, {
+    key: 'response',
+    value: function response(index) {
+      // NOOP 
+    }
+  }, {
+    key: 'success',
+    value: function success(index) {
+      this.refreshItemStatus(index, 'success');
+    }
+  }, {
+    key: 'progress',
+    value: function progress(index, loaded, total) {
+      this.updateProgress(index, loaded / total * 100);
+    }
+  }, {
+    key: 'fail',
+    value: function fail(index) {
+      this.refreshItemStatus(index, 'fail');
+    }
+  }, {
+    key: 'abort',
+    value: function abort(index) {}
   }]);
   return PreviewPanel;
 }();
@@ -1139,42 +1350,77 @@ var UploadServicePanel = function () {
 
       this.fileManager.addFiles(files);
       this.previewPanel.refresh();
+
+      // 파일 업로드 바로 실행하기 
+      this.fileManager.uploadAllFiles();
+    }
+  }, {
+    key: 'length',
+    value: function length() {
+      return this.fileManager.length();
     }
   }, {
     key: 'getFiles',
     value: function getFiles() {
       return this.fileManager.getFiles();
     }
+  }, {
+    key: 'getFile',
+    value: function getFile(index) {
+      return this.fileManager.getFile(index);
+    }
+  }, {
+    key: 'selectFile',
+    value: function selectFile(index, isSelected) {
+      this.fileManager.selectFile(index, isSelected);
+    }
+  }, {
+    key: 'deleteFile',
+    value: function deleteFile(index) {
+      this.fileManager.deleteFile(index);
+    }
 
     /* upload event method  */
 
   }, {
-    key: 'success',
-    value: function success(file, index) {
+    key: 'response',
+    value: function response(index) {
       if (typeof this.options.success === 'function') {
-        this.options.success(file, index);
+        this.options.response(this.getFile(index), index);
       }
+      this.previewPanel.response(index);
+    }
+  }, {
+    key: 'success',
+    value: function success(index) {
+      if (typeof this.options.success === 'function') {
+        this.options.success(this.getFile(index), index);
+      }
+      this.previewPanel.success(index);
     }
   }, {
     key: 'progress',
-    value: function progress(file, index, loaded, total) {
+    value: function progress(index, loaded, total) {
       if (typeof this.options.progress === 'function') {
-        this.options.progress(file, index, loaded, total);
+        this.options.progress(this.getFile(index), index, loaded, total);
       }
+      this.previewPanel.progress(index, loaded, total);
     }
   }, {
     key: 'fail',
-    value: function fail(file, index) {
+    value: function fail(index) {
       if (typeof this.options.fail === 'function') {
-        this.options.fail(file, index);
+        this.options.fail(this.getFile(file), index);
       }
+      this.previewPanel.fail(index);
     }
   }, {
     key: 'abort',
-    value: function abort(file, index) {
+    value: function abort(index) {
       if (typeof this.options.abort === 'function') {
-        this.options.abort(file, index);
+        this.options.abort(this.getFile(index), index);
       }
+      this.previewPanel.abort(index);
     }
   }]);
   return UploadServicePanel;
@@ -1273,7 +1519,6 @@ var DirectoryServicePanel = function () {
   return DirectoryServicePanel;
 }();
 
-// service 
 var FileUploader = function (_SummernotePlugin) {
   inherits(FileUploader, _SummernotePlugin);
 
@@ -1302,7 +1547,7 @@ var FileUploader = function (_SummernotePlugin) {
         contents: 'Uploader',
         tooltip: 'File Uploader',
         click: function click() {
-          _this2.$back.show();
+          _this2.show();
         }
       });
 
@@ -1364,6 +1609,11 @@ var FileUploader = function (_SummernotePlugin) {
       this.getActiveService().select();
     }
   }, {
+    key: 'clickCancelButton',
+    value: function clickCancelButton(e) {
+      this.hide();
+    }
+  }, {
     key: 'clickTab',
     value: function clickTab(e) {
       var $target = new Dom(e.target);
@@ -1389,8 +1639,10 @@ var FileUploader = function (_SummernotePlugin) {
   }, {
     key: 'initializeEvent',
     value: function initializeEvent() {
+      this.$$cancelFunc = this.clickCancelButton.bind(this);
       this.$$selectFunc = this.clickSelectButton.bind(this);
 
+      this.$cancel.on('click', this.$$cancelFunc);
       this.$select.on('click', this.$$selectFunc);
 
       this.$$clickTab = this.clickTab.bind(this);
@@ -1413,6 +1665,21 @@ var FileUploader = function (_SummernotePlugin) {
       this.$back.append(this.$el);
 
       this.$back.appendTo('body');
+    }
+  }, {
+    key: 'show',
+    value: function show() {
+      this.$back.show();
+    }
+  }, {
+    key: 'hide',
+    value: function hide() {
+      this.$back.hide();
+    }
+  }, {
+    key: 'toggle',
+    value: function toggle() {
+      this.$back.toggle();
     }
   }, {
     key: 'render',
@@ -1482,7 +1749,10 @@ var FileUploader = function (_SummernotePlugin) {
     value: function renderFooter() {
       this.$footer.empty();
 
+      this.$cancel = new Dom('button', 'cancel-button').html("Close");
       this.$select = new Dom('button', 'select-button').html("Select");
+
+      this.$footer.append(this.$cancel);
       this.$footer.append(this.$select);
     }
   }, {
@@ -1490,6 +1760,7 @@ var FileUploader = function (_SummernotePlugin) {
     value: function destroy() {
       get(FileUploader.prototype.__proto__ || Object.getPrototypeOf(FileUploader.prototype), 'destroy', this).call(this);
 
+      this.$cancel.off('click', this.$$cancelFunc);
       this.$select.off('click', this.$$selectFunc);
 
       for (var key in this.services) {
