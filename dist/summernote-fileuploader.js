@@ -1130,7 +1130,7 @@ var PreviewPanel = function () {
       var preview_image = '';
       if (image_url == 'about:blank') {
         empty = 'empty';
-        preview_image = '<div src="' + image_url + '" class=\'preview-image ' + empty + '\' data-file-ext=\'' + file_ext + '\' ></div> ';
+        preview_image = '<div class=\'preview-image ' + empty + '\' data-file-ext=\'' + file_ext + '\' ></div> ';
       } else {
         preview_image = '<img src="' + image_url + '" class=\'preview-image\' data-file-ext=\'' + file_ext + '\' /> ';
       }
@@ -1345,13 +1345,13 @@ var UploadServicePanel = function () {
 
       /* upload event method  */
       ['response', 'success', 'progress', 'fail', 'abort'].forEach(function (field) {
-        _this[field] = function (index) {
+        _this[field] = function (index, opt1, opt2) {
           if (typeof _this.options[field] === 'function') {
-            _this.options[field](_this.getFile(index), index);
+            _this.options[field](_this.getFile(index), index, opt1, opt2);
           }
 
           if (typeof _this.previewPanel[field] === 'function') {
-            _this.previewPanel[field](index);
+            _this.previewPanel[field](index, opt1, opt2);
           }
         };
       });
@@ -1642,13 +1642,13 @@ var FileUploader = function (_SummernotePlugin) {
     key: 'initializeUI',
     value: function initializeUI() {
 
-      this.$back = new Dom('div', 'summernote-fileuploader-back');
+      this.$back = new Dom('div', 'fileuploader-back');
 
       if (this.getOptions().zIndex) {
         this.$back.css('z-index', this.getOptions().zIndex);
       }
 
-      this.$el = new Dom('div', 'summernote-fileuploader', {
+      this.$el = new Dom('div', 'fileuploader', {
         droppable: true
       });
 
