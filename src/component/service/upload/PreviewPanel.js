@@ -110,6 +110,7 @@ class PreviewPanel {
   updateProgress (index, uploadedPercent) {
     const $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
 
+    console.log($progressbar, uploadedPercent);
     if ($progressbar) {
       $progressbar.css('width', uploadedPercent + '%');
     }

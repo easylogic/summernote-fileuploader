@@ -1109,6 +1109,7 @@ var PreviewPanel = function () {
     value: function updateProgress(index, uploadedPercent) {
       var $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
 
+      console.log($progressbar, uploadedPercent);
       if ($progressbar) {
         $progressbar.css('width', uploadedPercent + '%');
       }
@@ -1345,13 +1346,13 @@ var UploadServicePanel = function () {
 
       /* upload event method  */
       ['response', 'success', 'progress', 'fail', 'abort'].forEach(function (field) {
-        _this[field] = function (index) {
+        _this[field] = function (index, opt1, opt2, opt3) {
           if (typeof _this.options[field] === 'function') {
-            _this.options[field](_this.getFile(index), index);
+            _this.options[field](_this.getFile(index), index, opt1, opt2, opt3);
           }
 
           if (typeof _this.previewPanel[field] === 'function') {
-            _this.previewPanel[field](index);
+            _this.previewPanel[field](index, opt1, opt2, opt3);
           }
         };
       });
@@ -1509,6 +1510,7 @@ var DirectoryServicePanel = function () {
   return DirectoryServicePanel;
 }();
 
+// service 
 var FileUploader = function (_SummernotePlugin) {
   inherits(FileUploader, _SummernotePlugin);
 
