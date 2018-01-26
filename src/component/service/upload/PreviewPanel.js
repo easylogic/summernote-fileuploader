@@ -133,7 +133,7 @@ class PreviewPanel {
     let preview_image = ``;
     if (image_url == 'about:blank') {
       empty = 'empty';
-      preview_image = `<div src="${image_url}" class='preview-image ${empty}' data-file-ext='${file_ext}' ></div> `      
+      preview_image = `<div class='preview-image ${empty}' data-file-ext='${file_ext}' ></div> `      
     } else {
       preview_image = `<img src="${image_url}" class='preview-image' data-file-ext='${file_ext}' /> `
     }

@@ -5,7 +5,7 @@ $upload-border: 1px solid $border-color;
 $selected-color: rgba(63,198,247,1);
 $selected-border: 1px solid $selected-color;
 
-.summernote-fileuploader-back {
+.fileuploader-back {
   position:fixed;
   left:0px;
   right:0px;
@@ -15,7 +15,7 @@ $selected-border: 1px solid $selected-color;
   background-color: rgba(56, 68, 80, 0.71);
 
 
-  .summernote-fileuploader {
+  .fileuploader {
     position: absolute;
     left:50%;
     top:50%;

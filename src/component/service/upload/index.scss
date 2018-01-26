@@ -57,13 +57,16 @@
             width: 120px;
             height: 120px;
             box-sizing: border-box;
-            padding:2px;
             margin:5px 5px;
             margin-bottom: 0px;
             margin-right: 0px;
             background-color: rgb(255, 255, 255);
             cursor:pointer;
             text-align: center;
+            border-radius: 5px;
+            overflow: hidden;
+            border:1px solid rgba(0, 0, 0, 0.3);             
+            
 
             &.selected {
                 background-color: $selected-color;
@@ -85,33 +88,30 @@
 
             .item-close {
                 position: absolute;
-                right: 2px;
-                top: -2px;
+                right: 0px;
+                top: 0px;
                 margin:0px;
                 padding:0px;
                 display:inline-block;
                 z-index: 100;
-
+                width:16px;
+                height:16px;
+                background-color: rgba(0, 0, 0, 0.2);
                 pointer-events: all;
+                overflow:hidden;
+                transition: all 0.3s linear;
+                border-bottom-left-radius: 5px;
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.7);
+                }
 
                 span {
-                    background-color: rgba(0, 0, 0, 0.2);
-                    font-size: 13px;
-                    line-height: 14px;
                     display: inline-block;
-                    width: 16px;
-                    height: 17px;
                     text-align: center;
                     box-sizing: border-box;
-                    margin: 0px;
-                    padding: 0px;
                     color: #ffffff;
-                    transition: all 0.3s linear;
-
-                    &:hover {
-                        background-color: rgba(0, 0, 0, 0.7);
-
-                    }
+                    vertical-align: middle;
+                    margin-top: -10px;
                 }
 
             }
@@ -122,15 +122,40 @@
                 position: relative;
                 display:inline-block;
                 vertical-align: middle;
-                border:1px solid rgba(0, 0, 0, 0.3); 
                 box-sizing:border-box;
+                background-color: #4e5d70;
 
+                &[data-file-ext='psd'] { background-color: #558ae6; }
+                &[data-file-ext='ai'] { background-color: #eaa800; }
+                &[data-file-ext='ae'] { background-color: #867ec6; }
+                &[data-file-ext='id'] { background-color: #d767c7; }
+                &[data-file-ext='jpg'] { background-color: #63a3c8; }
+                &[data-file-ext='jpeg'] { background-color: #63a3c8; }
+                &[data-file-ext='png'] { background-color: #e9c144; }
+                &[data-file-ext='gif'] { background-color: #a2bf59; }
+                &[data-file-ext='scatch'] { background-color: #4e5d70; }
+                &[data-file-ext='pdf'] { background-color: #dc4c40; }
+                &[data-file-ext='html'] { background-color: #98b450; }
+                &[data-file-ext='css'] { background-color: #dc625a; }
+                &[data-file-ext='js'] { background-color: #4e5d70; }
+                &[data-file-ext='php'] { background-color: #60a8a3; }
+                &[data-file-ext='xml'] { background-color: #4970a9; }
+                &[data-file-ext='mp3'] { background-color: #2296d5; }
+                &[data-file-ext='ogg'] { background-color: #2296d5; }
+                &[data-file-ext='mid'] { background-color: #2296d5; }
+                &[data-file-ext='mpeg'] { background-color: #4e5d70; }
+                &[data-file-ext='mp4'] { background-color: #4e5d70; }
+                &[data-file-ext='avi'] { background-color: #4e5d70; }
+                &[data-file-ext='mov'] { background-color: #4e5d70; }
+                &[data-file-ext='ppt'] { background-color: #ec6c35; }
+                &[data-file-ext='pptx'] { background-color: #ec6c35; }
+                &[data-file-ext='xls'] { background-color: #ec6c35; }
+                &[data-file-ext='xlsx'] { background-color: #ec6c35; }
+                &[data-file-ext='doc'] { background-color: #4970a9; }
+                &[data-file-ext='docx'] { background-color: #4970a9; }
+                
                 &.empty {
-                    background-color: #dc4c40;
 
-                    &[data-file-ext='jar'] {
-                        background-color: yellow;
-                    }
 
                     &:after {
                         border-radius: 10px;
@@ -182,7 +207,15 @@
             }
 
             .file-progress {
+<<<<<<< HEAD
                 height: 2px;
+=======
+                position:absolute;
+                bottom:0px;
+                left:0px;
+                right:0px;                
+                height: 4px;
+>>>>>>> 9cd08ecf6566b8fe1c9c7240b743611bef32fa95
                 box-sizing:border-box;
                 margin:0px;
                 padding:0px;
@@ -191,7 +224,7 @@
                 .file-progress-bar {
                     width:0%;
                     height:100%;
-                    background-color: $selected-color;
+                    background-color: rgba(255, 255, 255, 0.5);
                 }
             }
         }

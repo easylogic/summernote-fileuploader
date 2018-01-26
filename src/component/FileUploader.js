@@ -117,14 +117,14 @@ class FileUploader extends SummernotePlugin {
 
   initializeUI () {
 
-    this.$back = new Dom('div', 'summernote-fileuploader-back');
+    this.$back = new Dom('div', 'fileuploader-back');
 
     if (this.getOptions().zIndex) {
       this.$back.css('z-index', this.getOptions().zIndex);
     }
 
 
-    this.$el = new Dom('div', 'summernote-fileuploader', {
+    this.$el = new Dom('div', 'fileuploader', {
       droppable : true 
     });
 

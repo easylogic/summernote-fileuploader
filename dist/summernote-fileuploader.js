@@ -1131,7 +1131,7 @@ var PreviewPanel = function () {
       var preview_image = '';
       if (image_url == 'about:blank') {
         empty = 'empty';
-        preview_image = '<div src="' + image_url + '" class=\'preview-image ' + empty + '\' data-file-ext=\'' + file_ext + '\' ></div> ';
+        preview_image = '<div class=\'preview-image ' + empty + '\' data-file-ext=\'' + file_ext + '\' ></div> ';
       } else {
         preview_image = '<img src="' + image_url + '" class=\'preview-image\' data-file-ext=\'' + file_ext + '\' /> ';
       }
@@ -1346,6 +1346,7 @@ var UploadServicePanel = function () {
 
       /* upload event method  */
       ['response', 'success', 'progress', 'fail', 'abort'].forEach(function (field) {
+<<<<<<< HEAD
         _this[field] = function (index, opt1, opt2, opt3) {
           if (typeof _this.options[field] === 'function') {
             _this.options[field](_this.getFile(index), index, opt1, opt2, opt3);
@@ -1353,6 +1354,15 @@ var UploadServicePanel = function () {
 
           if (typeof _this.previewPanel[field] === 'function') {
             _this.previewPanel[field](index, opt1, opt2, opt3);
+=======
+        _this[field] = function (index, opt1, opt2) {
+          if (typeof _this.options[field] === 'function') {
+            _this.options[field](_this.getFile(index), index, opt1, opt2);
+          }
+
+          if (typeof _this.previewPanel[field] === 'function') {
+            _this.previewPanel[field](index, opt1, opt2);
+>>>>>>> 9cd08ecf6566b8fe1c9c7240b743611bef32fa95
           }
         };
       });
@@ -1644,13 +1654,13 @@ var FileUploader = function (_SummernotePlugin) {
     key: 'initializeUI',
     value: function initializeUI() {
 
-      this.$back = new Dom('div', 'summernote-fileuploader-back');
+      this.$back = new Dom('div', 'fileuploader-back');
 
       if (this.getOptions().zIndex) {
         this.$back.css('z-index', this.getOptions().zIndex);
       }
 
-      this.$el = new Dom('div', 'summernote-fileuploader', {
+      this.$el = new Dom('div', 'fileuploader', {
         droppable: true
       });
 
