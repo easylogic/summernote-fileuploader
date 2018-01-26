@@ -68,15 +68,6 @@ class UploadServicePanel {
 
     /* upload event method  */    
     ['response', 'success', 'progress', 'fail', 'abort'].forEach((field) => {
-<<<<<<< HEAD
-      this[field] = (index, opt1, opt2, opt3) => {
-        if (typeof this.options[field] === 'function') {
-          this.options[field](this.getFile(index), index, opt1, opt2, opt3);
-        }
-
-        if (typeof this.previewPanel[field] === 'function' ) {
-          this.previewPanel[field](index, opt1, opt2, opt3);
-=======
       this[field] = (index, opt1, opt2) => {
         if (typeof this.options[field] === 'function') {
           this.options[field](this.getFile(index), index, opt1, opt2);
@@ -84,7 +75,6 @@ class UploadServicePanel {
 
         if (typeof this.previewPanel[field] === 'function' ) {
           this.previewPanel[field](index, opt1, opt2);
->>>>>>> 9cd08ecf6566b8fe1c9c7240b743611bef32fa95
         }
 
       }
