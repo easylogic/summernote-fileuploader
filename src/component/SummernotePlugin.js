@@ -1,5 +1,8 @@
-class SummernotePlugin {
+import EventMachin from "../util/EventMachin";
+
+class SummernotePlugin extends EventMachin {
   constructor(context) {
+    super();
     this.context = context; 
     this.events = {};
     this.initializeSummernoteResources();
@@ -7,12 +10,6 @@ class SummernotePlugin {
 
   getOptions (key) {
     return this.context.options[key] || {};
-  }
-
-  filterProps (pattern) {
-    return Object.getOwnPropertyNames(this.__proto__).filter(key => {
-      return key.includes(pattern);
-    });
   }
 
   initializeSummernoteResources () {
@@ -24,8 +21,6 @@ class SummernotePlugin {
     this.filterProps('summernote.').forEach(key => {
       this.events[key] = this[key].bind(this);
     });
-
-
   }
 
   invoke () {
@@ -34,10 +29,11 @@ class SummernotePlugin {
 
   initialize() {
 
+    super.initializeEvent();
   }
 
   destroy() {
-    
+    super.destroy();
   }
 
 

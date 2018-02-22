@@ -1,8 +1,11 @@
 import './index.scss'
 import Dom from '../../../util/Dom'
+import SummernotePlugin from '../../SummernotePlugin';
 
-class DirectoryServicePanel {
+class DirectoryServicePanel extends SummernotePlugin {
   constructor(uploader, context) {
+    super();
+
     this.uploader = uploader;
     this.context = context; 
 
@@ -24,12 +27,11 @@ class DirectoryServicePanel {
 
   initialize () {
 
-
     this.$el = new Dom('div', 'summernote-directory-service-panel', {
       droppable : true 
     });
 
-
+    super.initialize();
   }
 
   drop (e) {

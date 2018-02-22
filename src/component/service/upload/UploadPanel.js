@@ -1,10 +1,13 @@
 import Dom from '../../../util/Dom'
+import SummernotePlugin from '../../SummernotePlugin';
 
-class UploadPanel {
+class UploadPanel extends SummernotePlugin {
   constructor(service, context /* summernote context */) {
+    super();
     this.service = service;
     this.context = context; 
     this.options = this.service.getOptions();
+
     this.initialize();
   }
 
@@ -20,7 +23,7 @@ class UploadPanel {
     
     this.$el.append(this.$fileInput);
 
-    this.initializeEvent();
+    super.initialize();
   }
 
   openFileDialog () {
@@ -28,15 +31,9 @@ class UploadPanel {
     this.$fileInput.el.click();
   }
 
-  changeFileInput (e) {
+
+  'change $fileInput' (e) {
     this.service.addFile([...e.target.files]);
-  }
-
-  initializeEvent() {
-
-    this.$$changeFileInput = this.changeFileInput.bind(this);
-
-    this.$fileInput.addEventListener('change', this.$$changeFileInput);
   }
 
   appendTo (selector) {
@@ -49,7 +46,6 @@ class UploadPanel {
   }
 
   destroy() {
-    this.$fileInput.removeEventListener('change', this.$$changeFileInput);
     this.$el.remove();    
     this.$fileInput = null;
     this.$el = null;    

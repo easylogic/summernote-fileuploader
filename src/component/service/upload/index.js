@@ -3,9 +3,11 @@ import Dom from '../../../util/Dom'
 import FileManager from './FileManager'
 import UploadPanel from './UploadPanel'
 import PreviewPanel from './PreviewPanel'
+import SummernotePlugin from '../../SummernotePlugin';
 
-class UploadServicePanel {
+class UploadServicePanel extends SummernotePlugin {
   constructor(uploader, context) {
+    super();
     this.uploader = uploader;
     this.context = context; 
 
@@ -41,27 +43,19 @@ class UploadServicePanel {
     this.$el.append(this.uploadPanel.$el);
     this.$el.append(this.previewPanel.$el);
 
-    this.initializeEvent();
+    this.initializeFileEvent();
+
+    super.initialize();
   }
 
-  drop (e) {
+
+  'drop' (e) {
     e.preventDefault()
     this.addFile([...e.dataTransfer.files])
   }
 
-  dragover (e) {
-    e.preventDefault()
-  }
-
-  initializeEvent () {
-
-    this.$$drop = this.drop.bind(this);
-    this.$$dragover = this.dragover.bind(this);
-
-    this.$el.on('drop', this.$$drop);
-    this.$el.on('dragover', this.$$dragover);    
-
-    this.initializeFileEvent();
+  'dragover' (e) {
+    e.preventDefault();
   }
 
   initializeFileEvent () {
@@ -84,15 +78,11 @@ class UploadServicePanel {
   destroy () {
     super.destroy();
 
-    this.$el.off('drop', this.$$drop);
-    this.$el.off('dragover', this.$$dragover);    
-
     this.uploadPanel.destroy();
     this.previewPanel.destroy();
 
     this.uploadPanel = null;
     this.previewPanel = null; 
-
 
     this.$el.remove();
     this.$el = null; 

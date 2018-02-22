@@ -1,8 +1,10 @@
 import Dom from '../../../util/Dom'
 import File from '../../../util/File'
+import SummernotePlugin from '../../SummernotePlugin';
 
-class PreviewPanel {
+class PreviewPanel extends SummernotePlugin {
   constructor(service, context /* summernote context */) {
+    super();
     this.service = service;
     this.context = context; 
     this.options = this.service.getOptions(); 
@@ -88,7 +90,7 @@ class PreviewPanel {
     }
 
 
-    this.initializeEvent();  
+    super.initialize();
   }
 
   refresh () {
@@ -110,7 +112,6 @@ class PreviewPanel {
   updateProgress (index, uploadedPercent) {
     const $progressbar = this.$el.find("[data-index='" + index + "']").find(".file-progress-bar");
 
-    console.log($progressbar, uploadedPercent);
     if ($progressbar) {
       $progressbar.css('width', uploadedPercent + '%');
     }
@@ -215,37 +216,29 @@ class PreviewPanel {
     this.$el.html(arr);
   }
 
-  itemClick (e) {
-    const $target = new Dom(e.target);
 
-    const $itemClose = $target.closest('item-close');
-    if ($itemClose) {
-      const $viewItem = $target.closest('view-item');
+  'click $el .item-close' (e) {
+    e.preventDefault();
+    const $viewItem = e.$delegateTarget.closest('view-item');
 
-      if ($viewItem) {
-        this.service.deleteFile($viewItem.attr('data-index'));
-        $viewItem.remove();
-      }
-
-    } else {
-      const $viewItem = $target.closest('view-item');      
-      if ($viewItem) {
-        $viewItem.toggleClass('selected')
-        this.service.selectFile($viewItem.attr('data-index'), $viewItem.hasClass('selected'));
-      }
+    if ($viewItem) {
+      this.service.deleteFile($viewItem.attr('data-index'));
+      $viewItem.remove();
     }
-
   }
 
-  initializeEvent() {
-    this.callbackItemClick = this.itemClick.bind(this);
-
-    this.$el.on('click', this.callbackItemClick);
+  'click $el .view-item' (e) {
+    e.preventDefault();
+    const $viewItem = e.$delegateTarget;
+    if ($viewItem) {
+      $viewItem.toggleClass('selected')
+      this.service.selectFile($viewItem.attr('data-index'), $viewItem.hasClass('selected'));
+    }
+    
   }
+
 
   destroy() {
-
-    this.$el.off('click', this.callbackItemClick);
 
     this.$el.remove();        
     this.$el = null;

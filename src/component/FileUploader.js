@@ -12,6 +12,14 @@ class FileUploader extends SummernotePlugin {
     super(context);    
     this.services = {};     
     this.activeService = '';
+
+    this.addService(new UploadServicePanel(this, this.context));
+    this.addService(new DirectoryServicePanel(this, this.context));    
+
+    this.setActiveService('upload');  // upload 서비스를 처음으로 선택     
+
+    this.initializeUI();
+    this.render();    
   }
 
   // new button 
@@ -53,19 +61,6 @@ class FileUploader extends SummernotePlugin {
     this.render();
   }
 
-  initialize () {
-    super.initialize();
-
-    this.addService(new UploadServicePanel(this, this.context));
-    this.addService(new DirectoryServicePanel(this, this.context));    
-
-    this.setActiveService('upload');  // upload 서비스를 처음으로 선택 
-    this.initializeUI();
-    this.render();
-
-    this.initializeEvent();
-  }
-
   setActiveService (id) {
     this.activeService = id; 
   }
@@ -74,25 +69,6 @@ class FileUploader extends SummernotePlugin {
     return this.services[this.activeService];
   }
 
-  clickSelectButton (e) {
-    this.getActiveService().select();
-  }
-
-  clickCancelButton (e) {
-    this.hide()
-  }
-
-  clickTab (e) {
-    let $target = new Dom(e.target);
-
-    if ($target.hasClass('active')) {
-
-    } else {
-      this.setActiveService($target.attr('data-id'))
-      this.reloadTab();
-      this.reloadTabContents();    
-    }
-  }
 
   reloadTab () {
     this.$tab.find('.active').removeClass('active');
@@ -104,16 +80,25 @@ class FileUploader extends SummernotePlugin {
     this.$tabContents.find('[data-id='+this.activeService+']').addClass('active');
   }
 
-  initializeEvent() {
-    this.$$cancelFunc = this.clickCancelButton.bind(this);
-    this.$$selectFunc = this.clickSelectButton.bind(this);
-
-    this.$cancel.on('click', this.$$cancelFunc);
-    this.$select.on('click', this.$$selectFunc);    
-
-    this.$$clickTab = this.clickTab.bind(this);
-    this.$tab.on('click', this.$$clickTab);
+  'click $cancel' (e) {
+    this.hide();
   }
+
+  'click $select' (e) {
+    this.getActiveService().select();
+  }
+
+  'click $tab .tab-item' (e) {
+    let $target = e.$delegateTarget;
+
+    if ($target.hasClass('active')) {
+
+    } else {
+      this.setActiveService($target.attr('data-id'))
+      this.reloadTab();
+      this.reloadTabContents();    
+    }
+  } 
 
   initializeUI () {
 
@@ -216,10 +201,7 @@ class FileUploader extends SummernotePlugin {
   }
 
   destroy () {
-    super.destroy();
-
-    this.$cancel.off('click', this.$$cancelFunc);
-    this.$select.off('click', this.$$selectFunc);    
+    super.destroy(); 
 
     for(let key in this.services) {
       if (this.services[key]) {
